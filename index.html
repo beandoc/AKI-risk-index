@@ -229,7 +229,7 @@
     {
       "imports": {
         "react": "https://esm.sh/react@19.1.0",
-        "react-dom": "https://esm.sh/react-dom@19.1.0"
+        "react-dom/client": "https://esm.sh/react-dom@19.1.0/client"
       }
     }
   </script>
@@ -238,7 +238,7 @@
   <div id="root"></div>
   <script type="module">
     import React, { useState, useMemo, useCallback } from "react";
-    import ReactDOM from "react-dom";
+    import ReactDOM from "react-dom/client";
 
     // --- Constants ---
     const SEX_OPTIONS = [
@@ -467,7 +467,7 @@
         });
         schedule.push({
           timeframe: "By ~60 Days Post-Discharge",
-          action: "Key reassessment point. If no significant kidney function recovery, discuss potential transition to ESKD management pathway with your nephrologist.",
+          action: "Key reassessment. If no significant kidney function recovery, discuss potential transition to ESKD management pathway with your nephrologist.",
           targetDate: `Around ${addDaysToDate(dischargeDate, 60)}`,
           notes: "This depends on individual recovery phenotype assessed at discharge."
         });
@@ -479,7 +479,7 @@
         });
         schedule.push({
           timeframe: "By ~30-60 Days Post-Discharge",
-          action: "Critical reassessment point. If no evidence of kidney function recovery, discuss proactive transition to ESKD management and long-term kidney care options (dialysis access, transplant, etc.).",
+          action: "Critical reassessment. If no evidence of kidney function recovery, discuss proactive transition to ESKD management and long-term kidney care options.",
           targetDate: `Around ${addDaysToDate(dischargeDate, 30)} to ${addDaysToDate(dischargeDate, 60)}`,
           notes: "Early planning is crucial. Actual timing depends on individual recovery phenotype."
         });
@@ -493,9 +493,6 @@
     }
 
     // --- Guidance Data & Logic ---
-    // (For brevity, see prior responses for the full getGuidance function and structured guidance data.)
-    // This sample includes the main features; you can expand with more detail as in your initial app.
-
     function getGuidance(riskPercent, totalPointScore, patientData, akiStage, userRole) {
       const riskCategory = getRiskCategory(totalPointScore);
       const guidance = [];
@@ -549,7 +546,6 @@
         });
       }
 
-      // Patient roadmap and clinical care pathway (brief sample for demonstration)
       if (userRole === 'patient') {
         guidance.push({
           riskCategory: 'General',
@@ -595,7 +591,6 @@
         });
       }
 
-      // General Accordions
       guidance.push({
         riskCategory: 'General',
         title: 'General Post-Discharge AKI Care',
@@ -613,12 +608,9 @@
     // --- Guidance Display ---
     function GuidanceDisplay({ guidance, userRole }) {
       if (!guidance || guidance.length === 0) return null;
-      // Risk-specific
       const riskSpecific = guidance.find(x => ['Low','Moderate','High'].includes(x.riskCategory));
-      // Patient/Provider
       const roadmap = userRole==='patient' ? guidance.find(x=>x.title.startsWith('Patient Roadmap')) : null;
       const pathway = userRole==='provider'? guidance.find(x=>x.title.startsWith('Clinical Care Pathway')) : null;
-      // General Accordions
       const generalAccordions = guidance.filter(x =>
         x.riskCategory==='General' && x.title!==(roadmap?.title||'') && x.title!==(pathway?.title||'')
       );
@@ -783,7 +775,7 @@
             <Input id="dischargeDate" label="Hospital Discharge Date" type="date" value={patientData.dischargeDate ?? ''} onChange={handleInputChange} required />
             <Select id="inHospitalDialysis" label="In-hospital dialysis initiated?" value={patientData.inHospitalDialysis ? 'Yes' : 'No'} onChange={handleDialysisChange} options={IN_HOSPITAL_DIALYSIS_OPTIONS} required />
           </div>
-          <Button type="submit">Calculate Risk &amp; View Options</Button>
+          <Button type="submit">Calculate Risk & View Options</Button>
           {calculatedRisk !== null && calculatedAkiStage !== null && totalPoints !== null && (
             <div className="results-card">
               <h3 className="app-title" style={{fontSize:"1.4rem",marginBottom:"1.1rem"}}>Calculation Results</h3>
@@ -847,13 +839,15 @@
             </div>
           )}
           <div className="footer">
-            &copy; {new Date().getFullYear()} AKI Risk Index | For educational use only.
+            © {new Date().getFullYear()} AKI Risk Index | For educational use only.
           </div>
         </div>
       );
     }
 
-    ReactDOM.render(<App />, document.getElementById("root"));
+    const container = document.getElementById('root');
+    const root = ReactDOM.createRoot(container);
+    root.render(<App />);
   </script>
 </body>
 </html>
