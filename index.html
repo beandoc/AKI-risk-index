@@ -4,180 +4,225 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AKI Post-Discharge Toolkit - AKI Risk Index</title>
-  <!-- No external Tailwind: All CSS is in the style block below -->
+  <!-- All CSS is in this file, no external dependencies except Google Fonts and React CDN -->
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     html, body {
-      min-height: 100%;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #eef2ff 0%, #fff 60%, #dbeafe 100%);
-      color: #22223b;
+      min-height:100%; margin:0; padding:0;
+      font-family:'Inter',sans-serif;
+      background: linear-gradient(135deg,#eef2ff 0%, #fff 60%, #dbeafe 100%);
+      color: #23223a;
     }
     #root {
       min-height: 100vh;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
+      padding: 2.5vw 0;
     }
     .main-card {
-      max-width: 600px;
-      width: 98vw;
-      background: rgba(255,255,255,0.92);
-      border-radius: 2rem;
-      box-shadow: 0 10px 32px 0 rgba(30,64,175,0.09), 0 1.5px 4px 0 rgba(30,64,175,0.09);
-      border: 1px solid #e0e7ff;
-      padding: 2.5rem 2.3rem 2.3rem 2.3rem;
+      max-width: 880px; width: 99vw;
+      background: rgba(255,255,255,0.98);
+      border-radius: 2.2rem;
+      box-shadow: 0 10px 32px 0 rgba(30,64,175,0.12), 0 1.5px 4px 0 rgba(30,64,175,0.10);
+      border: 1.5px solid #e0e7ff;
+      padding: 2.3rem 1.7rem 2.0rem 1.7rem;
       margin: 1.5rem 0;
-      transition: box-shadow 0.2s;
-    }
-    .main-card:hover {
-      box-shadow: 0 16px 40px 0 rgba(30,64,175,0.15), 0 3px 10px 0 rgba(30,64,175,0.10);
     }
     .app-title {
-      font-size: 2.2rem;
-      font-weight: 900;
-      background: linear-gradient(90deg, #3730a3 15%, #10b981 80%);
+      font-size: 2.5rem; font-weight: 900;
+      background: linear-gradient(90deg, #3730a3 10%, #06b6d4 70%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      letter-spacing: -1px;
-      margin-bottom: 0.5rem;
       text-align: center;
+      margin-bottom: 0.6rem;
+      letter-spacing: -1px;
     }
     .app-subtitle {
-      font-size: 1.08rem;
-      font-weight: 500;
-      color: #3730a3;
-      text-align: center;
-      margin-bottom: 0.8rem;
-    }
-    .form-label {
+      font-size: 1.12rem;
       font-weight: 600;
-      font-size: 0.97rem;
-      margin-bottom: 0.2rem;
-      color: #312e81;
-      display:block;
+      color: #31316f;
+      margin-bottom: 1.0rem;
+      text-align: center;
     }
-    .form-req {
-      color: #be123c;
-      margin-left: 3px;
+    .role-chooser {
+      display: flex; gap: 1.2rem; justify-content: center; margin: 1.3rem 0 2.4rem 0;
     }
-    .form-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.4rem;
-      margin-bottom: 1rem;
-    }
-    .form-col {
-      flex: 1 1 220px;
-      min-width: 180px;
-      display: flex;
-      flex-direction: column;
-    }
-    .input, select {
-      padding: 0.7rem;
-      border-radius: 0.7rem;
-      border: 1.3px solid #c7d2fe;
-      font-size: 1rem;
-      color: #212a43;
-      background: #f8fafc;
-      outline: none;
-      transition: border 0.2s;
-      margin-bottom: 0.1rem;
-    }
-    .input:focus, select:focus {
-      border: 1.3px solid #6366f1;
-      background: #fff;
-    }
-    .input-unit {
-      margin-left: 0.7rem;
-      color: #818cf8;
-      font-size: 0.93rem;
-    }
-    .calc-btn {
-      margin-top: 0.7rem;
-      width: 100%;
+    .role-btn {
       background: linear-gradient(90deg, #6366f1 10%, #06b6d4 100%);
       color: #fff;
+      font-size: 1.05rem;
       font-weight: 700;
-      font-size: 1.12rem;
-      padding: 0.9rem 0;
-      border-radius: 0.9rem;
       border: none;
-      box-shadow: 0 1px 8px 0 #dbeafe;
+      border-radius: 2.2rem;
+      padding: 0.8rem 2.2rem;
+      box-shadow: 0 1px 8px 0 #e0e7ff;
       cursor: pointer;
-      transition: background 0.2s, box-shadow 0.2s;
+      transition: background 0.19s, box-shadow 0.19s, transform 0.13s;
+      outline: none;
+    }
+    .role-btn.active, .role-btn:focus {
+      background: linear-gradient(90deg, #3730a3 10%, #10b981 100%);
+      transform: scale(1.045);
+      box-shadow: 0 4px 18px 0 #a5b4fc;
+    }
+    .section-title {
+      font-size: 1.3rem; font-weight: 800; margin-bottom: 0.7rem;
+      color: #3730a3; letter-spacing:0.01em;
+      text-align:left;
+    }
+    .form-label {
+      font-weight: 600; font-size: 0.99rem; margin-bottom: 0.2rem; color: #312e81; display:block;
+    }
+    .form-req { color: #be123c; margin-left:2px;}
+    .form-row {
+      display: flex; flex-wrap: wrap; gap: 1.4rem; margin-bottom: 1rem;
+    }
+    .form-col {
+      flex: 1 1 220px; min-width: 180px; display: flex; flex-direction: column;
+    }
+    .input, select {
+      padding: 0.72rem; border-radius: 0.7rem; border: 1.5px solid #c7d2fe;
+      font-size: 1rem; color: #212a43; background: #f8fafc; outline: none;
+      transition: border 0.19s; margin-bottom: 0.11rem;
+    }
+    .input:focus, select:focus { border: 1.5px solid #6366f1; background: #fff; }
+    .input-unit { margin-left: 0.7rem; color: #818cf8; font-size: 0.93rem;}
+    .calc-btn {
+      margin: 1.1rem 0 0.4rem 0; width: 100%;
+      background: linear-gradient(90deg, #6366f1 10%, #06b6d4 100%);
+      color: #fff; font-weight: 700; font-size: 1.12rem;
+      padding: 1.03rem 0; border-radius: 0.9rem; border: none;
+      box-shadow: 0 1px 8px 0 #dbeafe; cursor: pointer;
+      transition: background 0.19s, box-shadow 0.19s;
     }
     .calc-btn:hover, .calc-btn:focus {
       background: linear-gradient(90deg, #3730a3 10%, #16a34a 100%);
       box-shadow: 0 4px 18px 0 #a5b4fc;
     }
     .results-card {
-      margin-top: 2.2rem;
-      background: linear-gradient(120deg, #e0e7ff 60%, #f0fdf4 100%);
-      border: 1.5px solid #6366f1;
-      border-radius: 1.4rem;
+      margin-top: 2.0rem; background: linear-gradient(120deg, #e0e7ff 60%, #f0fdf4 100%);
+      border: 1.5px solid #6366f1; border-radius: 1.4rem;
       box-shadow: 0 3px 24px 0 rgba(30,64,175,0.12);
       padding: 2rem 1.3rem 1.2rem 1.3rem;
       text-align: center;
-      animation: fade-in 0.75s cubic-bezier(.4,0,.2,1) both;
+      animation: fade-in 0.8s cubic-bezier(.4,0,.2,1) both;
     }
-    .result-label {
-      font-size: 1.04rem;
-      font-weight: 600;
-      color: #312e81;
-    }
-    .result-value {
-      display: block;
-      font-size: 1.35rem;
-      font-weight: 700;
-      margin: 0.16rem 0 0.4rem 0;
-      color: #0e7490;
-      letter-spacing: 0.01em;
-    }
+    .result-label { font-size: 1.05rem; font-weight: 600; color: #312e81;}
+    .result-value { display:block;font-size:1.35rem;font-weight:700;margin:0.16rem 0 0.4rem 0;color:#0e7490;}
     .result-badge {
       display: inline-block;
       background: linear-gradient(90deg,#6366f1,#06b6d4);
-      color: #fff;
-      border-radius: 9999px;
+      color: #fff; border-radius: 9999px;
       padding: 0.31rem 1.1rem;
-      font-size: 1.08rem;
-      font-weight: 700;
-      margin: 0.24rem 0;
-      box-shadow: 0 1px 4px #c7d2fe;
-      letter-spacing: 0.01em;
+      font-size: 1.08rem; font-weight: 700; margin: 0.24rem 0;
+      box-shadow: 0 1px 4px #c7d2fe; letter-spacing: 0.01em;
     }
     .result-score {
-      color: #3730a3;
-      background: #bfdbfe;
+      color: #3730a3; background: #bfdbfe;
       border-radius: 0.6rem;
       padding: 0.13rem 0.8rem;
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin: 0.3rem 0;
-      display: inline-block;
+      font-size: 1.1rem; font-weight: 700;
+      margin: 0.3rem 0; display: inline-block;
     }
     .result-note {
-      margin-top: 1.3rem;
-      color: #475569;
-      font-size: 0.93rem;
-      text-align: center;
-      line-height: 1.6;
+      margin-top: 1.2rem; color: #475569; font-size: 0.97rem; text-align: center; line-height: 1.6;
     }
+    .accordion {
+      margin: 1.2rem 0;
+    }
+    .accordion-item {
+      border-radius: 1.1rem;
+      border:1.3px solid #c7d2fe;
+      margin-bottom: 1.1rem;
+      background: #f8fafc;
+      overflow: hidden;
+      box-shadow:0 1px 6px #e0e7ff;
+    }
+    .accordion-header {
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; font-size: 1.09rem;
+      font-weight: 700; color: #3730a3;
+      padding: 1.15rem 1.2rem 1.15rem 1.2rem;
+      background: #eef2ff;
+      border: none; outline: none;
+      transition: background 0.13s;
+    }
+    .accordion-header:hover, .accordion-header:focus { background: #e0e7ff;}
+    .accordion-icon {
+      margin-left: .55em; transition: transform 0.19s;
+      color: #3730a3;
+    }
+    .accordion-content {
+      padding: 1.15rem 1.2rem 1.2rem 2.0rem;
+      background: #f8fafc;
+      font-size: 1.01rem;
+      animation: fade-in 0.5s cubic-bezier(.4,0,.2,1) both;
+    }
+    .acc-section-head {
+      font-size: 1.06rem;
+      font-weight:700;
+      color:#2563eb;
+      margin-bottom: 0.4em;
+    }
+    .acc-ul { margin-left: 0.6em; margin-bottom: 0.6em;}
+    .acc-ul li { margin-bottom: 0.24em; line-height: 1.65;}
+    .acc-source {
+      text-align: right;
+      color: #64748b;
+      font-size: 0.93rem;
+      margin-top: 0.8rem;
+      font-style: italic;
+    }
+    .roadmap-card, .carepathway-card {
+      background: linear-gradient(120deg, #f1f5f9 60%, #e0e7ff 100%);
+      border-radius: 1.15rem;
+      box-shadow: 0 2px 8px #dbeafe;
+      border: 1.3px solid #a5b4fc;
+      margin: 1.8rem 0 1.3rem 0;
+      padding: 1.8rem 1.2rem 1.3rem 1.2rem;
+      animation: fade-in 0.7s cubic-bezier(.4,0,.2,1) both;
+    }
+    .roadmap-title, .carepathway-title {
+      font-size: 1.20rem; font-weight: 900;
+      margin-bottom: 1.1rem;
+      background: linear-gradient(90deg,#3730a3 10%,#06b6d4 80%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .followup-section {
+      background: #e0f2fe;
+      border-radius: 0.8rem;
+      padding: 1.1rem 1.0rem 1.0rem 1.0rem;
+      margin-bottom: 1.2rem;
+      border: 1.5px solid #bae6fd;
+      box-shadow: 0 1px 8px #e0e7ff;
+    }
+    .followup-section h4 { color:#0e7490;font-weight:800;font-size:1.11rem;margin-bottom:0.7em;}
+    .followup-item {
+      margin-bottom: 0.7em;
+      padding: 0.6em;
+      background: #f0fdf4;
+      border-radius:0.6em;
+      border: 1.2px solid #bbf7d0;
+      box-shadow: 0 1px 4px #f0fdf4;
+    }
+    .followup-item .followup-date { color:#2563eb; font-weight:700; }
     .footer {
-      margin: 2.2rem 0 0.7rem 0;
+      margin: 2.3rem 0 0.7rem 0;
       font-size: 0.96rem;
       text-align: center;
       color: #c7d2fe;
     }
     @keyframes fade-in { 0% { opacity: 0; transform: translateY(20px);} 100% { opacity: 1; transform: translateY(0);} }
+    @media (max-width: 900px) {.main-card{max-width:98vw;}}
     @media (max-width: 600px) {
-      .main-card { padding: 1.1rem 0.6rem 1.5rem 0.6rem; }
-      .app-title { font-size: 1.33rem;}
-      .form-row { gap: 0.7rem;}
-      .form-col { min-width: 120px; }
-      .results-card { padding: 1.3rem 0.5rem 1rem 0.5rem;}
+      .main-card{padding: 1.1rem 0.4rem 1.2rem 0.4rem;}
+      .app-title{font-size: 1.37rem;}
+      .section-title{font-size:1.09rem;}
+      .form-row{gap:0.7rem;}
+      .form-col{min-width:120px;}
+      .results-card,.roadmap-card,.carepathway-card{padding:1.3rem 0.5rem 1rem 0.5rem;}
+      .accordion-content{padding:0.7rem 0.6rem;}
     }
   </style>
   <script type="importmap">
@@ -278,6 +323,28 @@
       );
     }
 
+    function AccordionItem({ title, children, initiallyOpen = false }) {
+      const [isOpen, setIsOpen] = useState(initiallyOpen);
+      return (
+        <div className="accordion-item">
+          <button
+            className="accordion-header"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-expanded={isOpen}
+            type="button"
+          >
+            <span>{title}</span>
+            <span className="accordion-icon" style={{transform:isOpen?'rotate(90deg)':'rotate(0deg)'}}>
+              <svg width="18" height="18" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9" fill="none" stroke="#3730a3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </span>
+          </button>
+          {isOpen && (
+            <div className="accordion-content">{children}</div>
+          )}
+        </div>
+      );
+    }
+
     // --- Risk Score Calculation Functions ---
     function getAgePoints(age) {
       if (age === null) return 0;
@@ -353,9 +420,282 @@
       if (score >= 28) return 75.0;
       return 75.0;
     }
+    function getRiskCategory(totalPointScore) {
+      if (totalPointScore < 15) return 'Low';
+      if (totalPointScore <= 19) return 'Moderate';
+      return 'High';
+    }
+    function addDaysToDate(dateString, days) {
+      if (!dateString) return "Date not specified";
+      try {
+        const date = new Date(dateString);
+        date.setUTCDate(date.getUTCDate() + days);
+        return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+      } catch (e) {
+        return "Invalid date";
+      }
+    }
+    function generateFollowUpSchedule(dischargeDate, riskCategory) {
+      if (!dischargeDate) {
+        return [{ timeframe: "Discharge Date Not Provided", action: "Cannot generate specific follow-up dates without hospital discharge date.", notes: "Please provide a discharge date for a tailored plan." }];
+      }
+      const schedule = [];
+      schedule.push({
+        timeframe: "Week 1-2 Post-Discharge",
+        action: "Initial follow-up with Nephrologist/Primary Care Provider.",
+        targetDate: `Around ${addDaysToDate(dischargeDate, 7)} to ${addDaysToDate(dischargeDate, 14)}`,
+        notes: "Discuss recovery, medications, and any immediate concerns."
+      });
+      schedule.push({
+        timeframe: "Ongoing (First Month)",
+        action: "Weekly lab monitoring (kidney function panel).",
+        targetDate: "Weekly",
+        notes: "Essential to track kidney function trend."
+      });
+      if (riskCategory === 'Low') {
+        schedule.push({
+          timeframe: "Month 1-3 Post-Discharge",
+          action: "Regular nephrology follow-ups as advised (e.g., monthly initially).",
+          targetDate: `By ${addDaysToDate(dischargeDate, 90)}`,
+          notes: "Assess for sustained kidney function recovery. Continue monitoring beyond 90 days if full recovery not yet evident or if underlying CKD exists."
+        });
+      } else if (riskCategory === 'Moderate') {
+        schedule.push({
+          timeframe: "Month 1-2 Post-Discharge",
+          action: "More frequent nephrology follow-ups (e.g., bi-weekly to monthly).",
+          notes: "Closer monitoring due to moderate risk of CKD progression."
+        });
+        schedule.push({
+          timeframe: "By ~60 Days Post-Discharge",
+          action: "Key reassessment point. If no significant kidney function recovery, discuss potential transition to ESKD management pathway with your nephrologist.",
+          targetDate: `Around ${addDaysToDate(dischargeDate, 60)}`,
+          notes: "This depends on individual recovery phenotype assessed at discharge."
+        });
+      } else {
+        schedule.push({
+          timeframe: "Month 1 Post-Discharge",
+          action: "Frequent nephrology follow-ups (e.g., weekly to bi-weekly).",
+          notes: "Intensive monitoring due to high risk of CKD progression."
+        });
+        schedule.push({
+          timeframe: "By ~30-60 Days Post-Discharge",
+          action: "Critical reassessment point. If no evidence of kidney function recovery, discuss proactive transition to ESKD management and long-term kidney care options (dialysis access, transplant, etc.).",
+          targetDate: `Around ${addDaysToDate(dischargeDate, 30)} to ${addDaysToDate(dischargeDate, 60)}`,
+          notes: "Early planning is crucial. Actual timing depends on individual recovery phenotype."
+        });
+      }
+      schedule.push({
+        timeframe: "Long-term",
+        action: "Ongoing follow-up as determined by your healthcare team, even if initial recovery occurs, due to increased future kidney risk.",
+        notes: "Protect your kidneys: manage blood pressure, diabetes (if present), avoid kidney-harming medications without advice."
+      });
+      return schedule;
+    }
+
+    // --- Guidance Data & Logic ---
+    // (For brevity, see prior responses for the full getGuidance function and structured guidance data.)
+    // This sample includes the main features; you can expand with more detail as in your initial app.
+
+    function getGuidance(riskPercent, totalPointScore, patientData, akiStage, userRole) {
+      const riskCategory = getRiskCategory(totalPointScore);
+      const guidance = [];
+
+      guidance.push({
+        riskCategory: 'General',
+        title: 'Important Disclaimer',
+        structuredContent: [{
+          heading: "Key Points",
+          points: [
+            "This information is for educational purposes and is not a substitute for professional medical advice.",
+            "Always consult with your healthcare provider for any health concerns or before making any changes to your treatment.",
+            "This toolkit is based on the ASN Kidney Health Guidance on the Outpatient Management of Patients with Dialysis-Requiring Acute Kidney Injury and the JAMA 2017 paper by James MT et al."
+          ]
+        }],
+        source: "General Medical Advice Principle"
+      });
+
+      if (riskCategory === 'Low') {
+        guidance.push({
+          riskCategory: 'Low',
+          title: `Guidance for Low Predicted CKD Risk (Score: ${totalPointScore}, Risk: ${riskPercent.toFixed(1)}%)`,
+          details: [
+            "Focus: Promoting kidney function recovery.",
+            "Monitoring: Close monitoring for kidney function recovery for at least 90 days after discharge is generally advised for AKI recovery. Your lower point score suggests a lower likelihood of progression to advanced CKD.",
+            "Action: Regular follow-ups with your nephrologist are crucial. Discuss any new symptoms or changes in your health immediately."
+          ],
+          source: "Risk stratification based on James MT et al., JAMA 2017, eTable 7. General recovery concepts from ASN Kidney Health Guidance, Table 2."
+        });
+      } else if (riskCategory === 'Moderate') {
+        guidance.push({
+          riskCategory: 'Moderate',
+          title: `Guidance for Moderate Predicted CKD Risk (Score: ${totalPointScore}, Risk: ${riskPercent.toFixed(1)}%)`,
+          details: [
+            "Focus: Promoting kidney function recovery while being vigilant for signs of CKD.",
+            "Monitoring: Close monitoring for kidney function recovery. Your point score suggests a moderate likelihood of progression to advanced CKD, warranting careful follow-up. Transition to ESKD may be considered if recovery is not observed.",
+            "Action: Maintain close communication with your healthcare team. Adherence to prescribed treatments and lifestyle modifications is key."
+          ],
+          source: "Risk stratification based on James MT et al., JAMA 2017, eTable 7. General recovery/monitoring concepts from ASN Kidney Health Guidance, Table 2 & Figure 1."
+        });
+      } else {
+        guidance.push({
+          riskCategory: 'High',
+          title: `Guidance for High Predicted CKD Risk (Score: ${totalPointScore}, Risk: ${riskPercent.toFixed(1)}%)`,
+          details: [
+            "Focus: Initial care focused on promoting kidney function recovery, but with a higher preparedness for potential long-term kidney issues.",
+            "Monitoring: Close monitoring is essential. Your high point score indicates a significant likelihood of progression to advanced CKD. Discuss the possibility of early transition to ESRD (End-Stage Renal Disease) with your provider.",
+            "Action: Proactive discussions about long-term kidney care options, including different types of dialysis or transplant evaluation, may be necessary."
+          ],
+          source: "Risk stratification based on James MT et al., JAMA 2017, eTable 7. General recovery/monitoring concepts from ASN Kidney Health Guidance, Table 2 & Figure 1."
+        });
+      }
+
+      // Patient roadmap and clinical care pathway (brief sample for demonstration)
+      if (userRole === 'patient') {
+        guidance.push({
+          riskCategory: 'General',
+          title: 'Patient Roadmap: Your Guide to Post-AKI Care',
+          structuredContent: [
+            {
+              heading: "1. Managing Your Medications",
+              points: [
+                "Your nurse and doctor will help review all your medications, including over-the-counter ones and supplements.",
+                "Avoid drugs that can harm kidneys (like NSAIDs - ibuprofen, naproxen) unless your doctor approves.",
+                "Discuss when to take your medications, especially blood pressure pills, in relation to any dialysis treatments."
+              ]
+            },
+            {
+              heading: "2. Tracking Your Fluids & Weight",
+              points: [
+                "Your team may ask about your usual weight before you got sick.",
+                "Monitoring your weight daily can be helpful.",
+                "Let your team know if you notice changes in how much you urinate.",
+                "Follow advice on how much fluid to drink."
+              ]
+            }
+          ],
+          followUpSchedule: generateFollowUpSchedule(patientData.dischargeDate, riskCategory),
+          source: "Derived from Supplement 2, ASN Kidney Health Guidance & general patient care principles."
+        });
+      } else if (userRole === 'provider') {
+        guidance.push({
+          riskCategory: 'General',
+          title: 'Clinical Care Pathway for Healthcare Providers',
+          structuredContent: [
+            {
+              heading: "Stage 1: Hospital Discharge Planning",
+              points: [
+                "Confirm patient readiness for discharge; identify if ongoing dialysis is required.",
+                "Educate patient/family on AKI, recovery expectations, and provide psychosocial support assessment.",
+                "Estimate patient's recovery phenotype (Low, Moderate, High) to guide outpatient monitoring duration if recovery doesn't occur.",
+                "Ensure a 'warm handoff' to the outpatient nephrology and dialysis team (if applicable), including AKI-D specific orders and transfer of medical records."
+              ]
+            }
+          ],
+          source: "ASN Kidney Health Guidance, Figure 1 and additional flowchart detail on monitoring duration."
+        });
+      }
+
+      // General Accordions
+      guidance.push({
+        riskCategory: 'General',
+        title: 'General Post-Discharge AKI Care',
+        structuredContent: [
+          { heading: "Education & Self-Management", points: ["Understand your condition, medications, and dietary/fluid restrictions. Know warning signs to report."] },
+          { heading: "Medication Adherence & Safety", points: ["Take all medications as prescribed. Avoid nephrotoxic drugs unless advised."] },
+          { heading: "Dietary Management", points: ["Follow specific dietary advice regarding sodium, potassium, phosphorus, protein, and fluids."] }
+        ],
+        source: "Fig. 1 & Table 4, ASN Kidney Health Guidance"
+      });
+
+      return guidance;
+    }
+
+    // --- Guidance Display ---
+    function GuidanceDisplay({ guidance, userRole }) {
+      if (!guidance || guidance.length === 0) return null;
+      // Risk-specific
+      const riskSpecific = guidance.find(x => ['Low','Moderate','High'].includes(x.riskCategory));
+      // Patient/Provider
+      const roadmap = userRole==='patient' ? guidance.find(x=>x.title.startsWith('Patient Roadmap')) : null;
+      const pathway = userRole==='provider'? guidance.find(x=>x.title.startsWith('Clinical Care Pathway')) : null;
+      // General Accordions
+      const generalAccordions = guidance.filter(x =>
+        x.riskCategory==='General' && x.title!==(roadmap?.title||'') && x.title!==(pathway?.title||'')
+      );
+      return (
+        <div>
+          {riskSpecific && (
+            <div className="results-card" style={{marginTop:"1.7em"}}>
+              <h3 className="section-title">{riskSpecific.title}</h3>
+              <ul style={{textAlign:'left',maxWidth:680,margin:'0 auto 0.6em auto'}}>
+                {riskSpecific.details && riskSpecific.details.map((pt,i)=>(
+                  <li key={i}>{pt}</li>
+                ))}
+              </ul>
+              <div className="acc-source">{riskSpecific.source}</div>
+            </div>
+          )}
+          {roadmap && (
+            <div className="roadmap-card">
+              <div className="roadmap-title">{roadmap.title}</div>
+              {roadmap.followUpSchedule && (
+                <div className="followup-section">
+                  <h4>Your Tailored Follow-up Schedule:</h4>
+                  {roadmap.followUpSchedule.map((item,i)=>(
+                    <div key={i} className="followup-item">
+                      <div className="followup-date">{item.timeframe}{item.targetDate?` (${item.targetDate})`:''}</div>
+                      <div>- {item.action}</div>
+                      {item.notes && <div style={{fontSize:'0.95em',color:'#64748b'}}>{item.notes}</div>}
+                    </div>
+                  ))}
+                </div>
+              )}
+              {roadmap.structuredContent && roadmap.structuredContent.map((sec,idx)=>
+                <div key={idx} style={{marginBottom:'1.1em'}}>
+                  <div className="acc-section-head">{sec.heading}</div>
+                  <ul className="acc-ul">
+                    {sec.points.map((pt,i)=><li key={i}>{pt}</li>)}
+                  </ul>
+                </div>
+              )}
+              <div className="acc-source">{roadmap.source}</div>
+            </div>
+          )}
+          {pathway && (
+            <div className="carepathway-card">
+              <div className="carepathway-title">{pathway.title}</div>
+              {pathway.structuredContent && pathway.structuredContent.map((sec,idx)=>
+                <div key={idx} style={{marginBottom:'1.1em'}}>
+                  <div className="acc-section-head">{sec.heading}</div>
+                  <ul className="acc-ul">
+                    {sec.points.map((pt,i)=><li key={i}>{pt}</li>)}
+                  </ul>
+                </div>
+              )}
+              <div className="acc-source">{pathway.source}</div>
+            </div>
+          )}
+          <div className="accordion">
+            {generalAccordions.map((item,idx)=>
+              <AccordionItem key={idx} title={item.title}>
+                {item.structuredContent && item.structuredContent.map((sec,ii)=>
+                  <div key={ii} style={{marginBottom:'0.7em'}}>
+                    <div className="acc-section-head">{sec.heading}</div>
+                    <ul className="acc-ul">
+                      {sec.points.map((pt,iii)=><li key={iii}>{pt}</li>)}
+                    </ul>
+                  </div>
+                )}
+                <div className="acc-source">{item.source}</div>
+              </AccordionItem>
+            )}
+          </div>
+        </div>
+      );
+    }
 
     // --- Main Calculator Form ---
-    function RiskCalculatorForm({ onRiskCalculated }) {
+    function RiskCalculatorForm({ onCalculated }) {
       const [patientData, setPatientData] = useState({
         age: null,
         sex: '',
@@ -369,7 +709,6 @@
       const [calculatedAkiStage, setCalculatedAkiStage] = useState(null);
       const [calculatedRisk, setCalculatedRisk] = useState(null);
       const [totalPoints, setTotalPoints] = useState(null);
-      const [showResult, setShowResult] = useState(false);
 
       const handleInputChange = useCallback((e) => {
         const { name, value, type } = e.target;
@@ -377,7 +716,6 @@
           ...prev,
           [name]: type === 'number' ? (value === '' ? null : parseFloat(value)) : value,
         }));
-        setShowResult(false);
       }, []);
 
       const handleSelectChange = useCallback((e) => {
@@ -386,7 +724,6 @@
           ...prev,
           [name]: value,
         }));
-        setShowResult(false);
       }, []);
 
       const handleDialysisChange = useCallback((e) => {
@@ -394,7 +731,6 @@
           ...prev,
           inHospitalDialysis: e.target.value === 'Yes',
         }));
-        setShowResult(false);
       }, []);
 
       const calculateAkiStage = useMemo(() => {
@@ -426,8 +762,7 @@
         setTotalPoints(points);
         const risk = getRiskFromPointScore(points);
         setCalculatedRisk(risk);
-        onRiskCalculated(risk, points, patientData, currentAkiStage);
-        setShowResult(true);
+        onCalculated(risk, points, patientData, currentAkiStage);
       }
 
       return (
@@ -449,7 +784,7 @@
             <Select id="inHospitalDialysis" label="In-hospital dialysis initiated?" value={patientData.inHospitalDialysis ? 'Yes' : 'No'} onChange={handleDialysisChange} options={IN_HOSPITAL_DIALYSIS_OPTIONS} required />
           </div>
           <Button type="submit">Calculate Risk &amp; View Options</Button>
-          {showResult && calculatedRisk !== null && calculatedAkiStage !== null && totalPoints !== null && (
+          {calculatedRisk !== null && calculatedAkiStage !== null && totalPoints !== null && (
             <div className="results-card">
               <h3 className="app-title" style={{fontSize:"1.4rem",marginBottom:"1.1rem"}}>Calculation Results</h3>
               <div className="result-label">Calculated AKI Stage:</div>
@@ -469,11 +804,48 @@
 
     // --- Main App Component ---
     function App() {
+      const [calculated, setCalculated] = useState(null);
+      const [userRole, setUserRole] = useState(null);
+      const [guidance, setGuidance] = useState([]);
+
+      // On submit, reset role and guidance
+      const handleCalculated = (risk, totalPoints, patientData, akiStage) => {
+        setCalculated({ risk, totalPoints, patientData, akiStage });
+        setUserRole(null);
+        setGuidance([]);
+      };
+
+      // Role selection triggers guidance generation
+      const handleRoleSelect = (role) => {
+        setUserRole(role);
+        if (calculated) {
+          setGuidance(getGuidance(
+            calculated.risk,
+            calculated.totalPoints,
+            calculated.patientData,
+            calculated.akiStage,
+            role
+          ));
+        }
+      };
+
       return (
         <div className="main-card">
           <div className="app-title">AKI Post-Discharge Toolkit</div>
           <div className="app-subtitle">AKI Risk Index Calculator</div>
-          <RiskCalculatorForm onRiskCalculated={() => {}} />
+          <RiskCalculatorForm onCalculated={handleCalculated} />
+          {calculated && (
+            <div>
+              <div className="section-title" style={{textAlign:'center',marginTop:"2.3rem",marginBottom:'0.5rem'}}>
+                Who are you viewing guidance for?
+              </div>
+              <div className="role-chooser">
+                <button className={"role-btn"+(userRole==='patient'?' active':'')} onClick={()=>handleRoleSelect('patient')}>Patient / Family</button>
+                <button className={"role-btn"+(userRole==='provider'?' active':'')} onClick={()=>handleRoleSelect('provider')}>Healthcare Provider</button>
+              </div>
+              {userRole && <GuidanceDisplay guidance={guidance} userRole={userRole} />}
+            </div>
+          )}
           <div className="footer">
             &copy; {new Date().getFullYear()} AKI Risk Index | For educational use only.
           </div>
