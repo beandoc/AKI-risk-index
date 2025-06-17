@@ -4,258 +4,114 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AKI Post-Discharge Toolkit - AKI Risk Index</title>
-  <!-- All CSS is in this file, no external dependencies except Google Fonts and React CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* Custom scrollbar for better aesthetics if needed */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+    body {
+      font-family: 'Inter', sans-serif; /* A clean, modern font often used with Tailwind */
+    }
+    /* Adding Inter font from Google Fonts (optional, Tailwind uses system fonts by default) */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    html, body {
-      min-height:100%; margin:0; padding:0;
-      font-family:'Inter',sans-serif;
-      background: linear-gradient(135deg,#eef2ff 0%, #fff 60%, #dbeafe 100%);
-      color: #23223a;
-    }
-    #root {
-      min-height: 100vh;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 2.5vw 0;
-    }
-    .main-card {
-      max-width: 880px; width: 99vw;
-      background: rgba(255,255,255,0.98);
-      border-radius: 2.2rem;
-      box-shadow: 0 10px 32px 0 rgba(30,64,175,0.12), 0 1.5px 4px 0 rgba(30,64,175,0.10);
-      border: 1.5px solid #e0e7ff;
-      padding: 2.3rem 1.7rem 2.0rem 1.7rem;
-      margin: 1.5rem 0;
-    }
-    .app-title {
-      font-size: 2.5rem; font-weight: 900;
-      background: linear-gradient(90deg, #3730a3 10%, #06b6d4 70%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-align: center;
-      margin-bottom: 0.6rem;
-      letter-spacing: -1px;
-    }
-    .app-subtitle {
-      font-size: 1.12rem;
-      font-weight: 600;
-      color: #31316f;
-      margin-bottom: 1.0rem;
-      text-align: center;
-    }
-    .role-chooser {
-      display: flex; gap: 1.2rem; justify-content: center; margin: 1.3rem 0 2.4rem 0;
-    }
-    .role-btn {
-      background: linear-gradient(90deg, #6366f1 10%, #06b6d4 100%);
-      color: #fff;
-      font-size: 1.05rem;
-      font-weight: 700;
-      border: none;
-      border-radius: 2.2rem;
-      padding: 0.8rem 2.2rem;
-      box-shadow: 0 1px 8px 0 #e0e7ff;
-      cursor: pointer;
-      transition: background 0.19s, box-shadow 0.19s, transform 0.13s;
-      outline: none;
-    }
-    .role-btn.active, .role-btn:focus {
-      background: linear-gradient(90deg, #3730a3 10%, #10b981 100%);
-      transform: scale(1.045);
-      box-shadow: 0 4px 18px 0 #a5b4fc;
-    }
-    .section-title {
-      font-size: 1.3rem; font-weight: 800; margin-bottom: 0.7rem;
-      color: #3730a3; letter-spacing:0.01em;
-      text-align:left;
-    }
-    .form-label {
-      font-weight: 600; font-size: 0.99rem; margin-bottom: 0.2rem; color: #312e81; display:block;
-    }
-    .form-req { color: #be123c; margin-left:2px;}
-    .form-row {
-      display: flex; flex-wrap: wrap; gap: 1.4rem; margin-bottom: 1rem;
-    }
-    .form-col {
-      flex: 1 1 220px; min-width: 180px; display: flex; flex-direction: column;
-    }
-    .input, select {
-      padding: 0.72rem; border-radius: 0.7rem; border: 1.5px solid #c7d2fe;
-      font-size: 1rem; color: #212a43; background: #f8fafc; outline: none;
-      transition: border 0.19s; margin-bottom: 0.11rem;
-    }
-    .input:focus, select:focus { border: 1.5px solid #6366f1; background: #fff; }
-    .input-unit { margin-left: 0.7rem; color: #818cf8; font-size: 0.93rem;}
-    .calc-btn {
-      margin: 1.1rem 0 0.4rem 0; width: 100%;
-      background: linear-gradient(90deg, #6366f1 10%, #06b6d4 100%);
-      color: #fff; font-weight: 700; font-size: 1.12rem;
-      padding: 1.03rem 0; border-radius: 0.9rem; border: none;
-      box-shadow: 0 1px 8px 0 #dbeafe; cursor: pointer;
-      transition: background 0.19s, box-shadow 0.19s;
-    }
-    .calc-btn:hover, .calc-btn:focus {
-      background: linear-gradient(90deg, #3730a3 10%, #16a34a 100%);
-      box-shadow: 0 4px 18px 0 #a5b4fc;
-    }
-    .results-card {
-      margin-top: 2.0rem; background: linear-gradient(120deg, #e0e7ff 60%, #f0fdf4 100%);
-      border: 1.5px solid #6366f1; border-radius: 1.4rem;
-      box-shadow: 0 3px 24px 0 rgba(30,64,175,0.12);
-      padding: 2rem 1.3rem 1.2rem 1.3rem;
-      text-align: center;
-      animation: fade-in 0.8s cubic-bezier(.4,0,.2,1) both;
-    }
-    .result-label { font-size: 1.05rem; font-weight: 600; color: #312e81;}
-    .result-value { display:block;font-size:1.35rem;font-weight:700;margin:0.16rem 0 0.4rem 0;color:#0e7490;}
-    .result-badge {
-      display: inline-block;
-      background: linear-gradient(90deg,#6366f1,#06b6d4);
-      color: #fff; border-radius: 9999px;
-      padding: 0.31rem 1.1rem;
-      font-size: 1.08rem; font-weight: 700; margin: 0.24rem 0;
-      box-shadow: 0 1px 4px #c7d2fe; letter-spacing: 0.01em;
-    }
-    .result-score {
-      color: #3730a3; background: #bfdbfe;
-      border-radius: 0.6rem;
-      padding: 0.13rem 0.8rem;
-      font-size: 1.1rem; font-weight: 700;
-      margin: 0.3rem 0; display: inline-block;
-    }
-    .result-note {
-      margin-top: 1.2rem; color: #475569; font-size: 0.97rem; text-align: center; line-height: 1.6;
-    }
-    .accordion {
-      margin: 1.2rem 0;
-    }
-    .accordion-item {
-      border-radius: 1.1rem;
-      border:1.3px solid #c7d2fe;
-      margin-bottom: 1.1rem;
-      background: #f8fafc;
-      overflow: hidden;
-      box-shadow:0 1px 6px #e0e7ff;
-    }
-    .accordion-header {
-      display: flex; align-items: center; justify-content: space-between;
-      cursor: pointer; font-size: 1.09rem;
-      font-weight: 700; color: #3730a3;
-      padding: 1.15rem 1.2rem 1.15rem 1.2rem;
-      background: #eef2ff;
-      border: none; outline: none;
-      transition: background 0.13s;
-    }
-    .accordion-header:hover, .accordion-header:focus { background: #e0e7ff;}
-    .accordion-icon {
-      margin-left: .55em; transition: transform 0.19s;
-      color: #3730a3;
-    }
-    .accordion-content {
-      padding: 1.15rem 1.2rem 1.2rem 2.0rem;
-      background: #f8fafc;
-      font-size: 1.01rem;
-      animation: fade-in 0.5s cubic-bezier(.4,0,.2,1) both;
-    }
-    .acc-section-head {
-      font-size: 1.06rem;
-      font-weight:700;
-      color:#2563eb;
-      margin-bottom: 0.4em;
-    }
-    .acc-ul { margin-left: 0.6em; margin-bottom: 0.6em;}
-    .acc-ul li { margin-bottom: 0.24em; line-height: 1.65;}
-    .acc-source {
-      text-align: right;
-      color: #64748b;
-      font-size: 0.93rem;
-      margin-top: 0.8rem;
-      font-style: italic;
-    }
-    .roadmap-card, .carepathway-card {
-      background: linear-gradient(120deg, #f1f5f9 60%, #e0e7ff 100%);
-      border-radius: 1.15rem;
-      box-shadow: 0 2px 8px #dbeafe;
-      border: 1.3px solid #a5b4fc;
-      margin: 1.8rem 0 1.3rem 0;
-      padding: 1.8rem 1.2rem 1.3rem 1.2rem;
-      animation: fade-in 0.7s cubic-bezier(.4,0,.2,1) both;
-    }
-    .roadmap-title, .carepathway-title {
-      font-size: 1.20rem; font-weight: 900;
-      margin-bottom: 1.1rem;
-      background: linear-gradient(90deg,#3730a3 10%,#06b6d4 80%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .followup-section {
-      background: #e0f2fe;
-      border-radius: 0.8rem;
-      padding: 1.1rem 1.0rem 1.0rem 1.0rem;
-      margin-bottom: 1.2rem;
-      border: 1.5px solid #bae6fd;
-      box-shadow: 0 1px 8px #e0e7ff;
-    }
-    .followup-section h4 { color:#0e7490;font-weight:800;font-size:1.11rem;margin-bottom:0.7em;}
-    .followup-item {
-      margin-bottom: 0.7em;
-      padding: 0.6em;
-      background: #f0fdf4;
-      border-radius:0.6em;
-      border: 1.2px solid #bbf7d0;
-      box-shadow: 0 1px 4px #f0fdf4;
-    }
-    .followup-item .followup-date { color:#2563eb; font-weight:700; }
-    .footer {
-      margin: 2.3rem 0 0.7rem 0;
-      font-size: 0.96rem;
-      text-align: center;
-      color: #c7d2fe;
-    }
-    @keyframes fade-in { 0% { opacity: 0; transform: translateY(20px);} 100% { opacity: 1; transform: translateY(0);} }
-    @media (max-width: 900px) {.main-card{max-width:98vw;}}
-    @media (max-width: 600px) {
-      .main-card{padding: 1.1rem 0.4rem 1.2rem 0.4rem;}
-      .app-title{font-size: 1.37rem;}
-      .section-title{font-size:1.09rem;}
-      .form-row{gap:0.7rem;}
-      .form-col{min-width:120px;}
-      .results-card,.roadmap-card,.carepathway-card{padding:1.3rem 0.5rem 1rem 0.5rem;}
-      .accordion-content{padding:0.7rem 0.6rem;}
-    }
   </style>
-  <script type="importmap">
-    {
-      "imports": {
-        "react": "https://esm.sh/react@19.1.0",
-        "react-dom/client": "https://esm.sh/react-dom@19.1.0/client"
-      }
-    }
-  </script>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/"
+  }
+}
+</script>
 </head>
-<body>
+<body class="bg-gray-100">
   <div id="root"></div>
   <script type="module">
-    import React, { useState, useMemo, useCallback } from "react";
-    import ReactDOM from "react-dom/client";
+    // --- START OF INLINED SCRIPT CONTENT ---
 
-    // --- Constants ---
+    // --- types.ts ---
+    // Interfaces and types are defined here.
+    // In a direct browser environment without TS compilation, these act as comments or guides.
+    // However, esm.sh might do some on-the-fly transpilation for React components using types.
+    /**
+     * @typedef {object} PatientData
+     * @property {number | null} age
+     * @property {'Female' | 'Male' | ''} sex
+     * @property {'Heavy' | 'Moderate' | 'Mild/None' | ''} albuminuria
+     * @property {boolean} inHospitalDialysis
+     * @property {number | null} baselineScr
+     * @property {number | null} peakScrInHospital
+     * @property {number | null} dischargeScr
+     * @property {string | null} dischargeDate
+     */
+
+    /** @typedef {0 | 1 | 2 | 3} AKIStage */
+
+    /**
+     * @typedef {object} SelectOption
+     * @property {string} value
+     * @property {string} label
+     */
+
+    /**
+     * @typedef {object} StructuredContentSection
+     * @property {string} heading
+     * @property {string[]} points
+     * @property {boolean} [isSubSection]
+     */
+
+    /**
+     * @typedef {object} FollowUpItem
+     * @property {string} timeframe
+     * @property {string} action
+     * @property {string} [targetDate]
+     * @property {string} [notes]
+     */
+
+    /**
+     * @typedef {object} FormattedGuidance
+     * @property {'Low' | 'Moderate' | 'High' | 'General'} riskCategory
+     * @property {string} title
+     * @property {string[]} [details]
+     * @property {StructuredContentSection[]} [structuredContent]
+     * @property {FollowUpItem[]} [followUpSchedule]
+     * @property {string} [source]
+     */
+
+    /** @typedef {'patient' | 'provider' | null} UserRole */
+
+
+    // --- constants.ts ---
     const SEX_OPTIONS = [
       { value: '', label: 'Select Sex' },
       { value: 'Female', label: 'Female' },
       { value: 'Male', label: 'Male' },
     ];
+
     const ALBUMINURIA_OPTIONS = [
       { value: '', label: 'Select Albuminuria Level' },
       { value: 'Mild/None', label: 'Mild/None' },
       { value: 'Moderate', label: 'Moderate' },
       { value: 'Heavy', label: 'Heavy' },
     ];
+
     const IN_HOSPITAL_DIALYSIS_OPTIONS = [
       { value: 'No', label: 'No' },
       { value: 'Yes', label: 'Yes' },
     ];
+
     const AKI_STAGE_DISPLAY = {
       0: "No AKI / Stage 0 (Review inputs)",
       1: "Stage 1",
@@ -263,183 +119,135 @@
       3: "Stage 3"
     };
 
-    // --- UI Components ---
-    function Input({ id, label, type, value, onChange, placeholder, unit, required, min, max, step }) {
-      return (
-        <div className="form-col">
-          <label htmlFor={id} className="form-label">
-            {label} {required && <span className="form-req">*</span>}
-          </label>
-          <div style={{display:"flex",alignItems:"center"}}>
-            <input
-              className="input"
-              type={type}
-              id={id}
-              name={id}
-              value={value === null ? '' : value}
-              onChange={onChange}
-              placeholder={placeholder}
-              required={required}
-              min={min}
-              max={max}
-              step={step}
-              autoComplete="off"
-            />
-            {unit && <span className="input-unit">{unit}</span>}
-          </div>
-        </div>
-      );
-    }
+    // --- React and ReactDOM will be imported via esm.sh based on importmap ---
+    import React, { useState, useMemo, useCallback } from 'react'; // Removed ChangeEvent, FormEvent, ReactNode
+    import ReactDOM from 'react-dom/client';
 
-    function Select({ id, label, value, onChange, options, required }) {
+    // --- components/ui/Input.tsx ---
+    const Input = ({ id, label, type, value, onChange, placeholder, unit, required, min, max, step }) => {
       return (
-        <div className="form-col">
-          <label htmlFor={id} className="form-label">
-            {label} {required && <span className="form-req">*</span>}
-          </label>
-          <select
-            className="input"
-            id={id}
-            name={id}
-            value={value}
-            onChange={onChange}
-            required={required}
-          >
-            {options.map(option => (
-              <option key={option.value} value={option.value} disabled={option.value === ''}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        React.createElement("div", { className: "mb-4" },
+          React.createElement("label", { htmlFor: id, className: "block text-sm font-medium text-gray-700 mb-1" },
+            label, " ", required && React.createElement("span", { className: "text-red-500" }, "*")
+          ),
+          React.createElement("div", { className: "flex items-center" },
+            React.createElement("input", {
+              type: type,
+              id: id,
+              name: id,
+              value: value === null ? '' : value,
+              onChange: onChange,
+              placeholder: placeholder,
+              required: required,
+              min: min,
+              max: max,
+              step: step,
+              className: "mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            }),
+            unit && React.createElement("span", { className: "ml-2 text-gray-500" }, unit)
+          )
+        )
       );
-    }
+    };
 
-    function Button({ children, ...props }) {
+    // --- components/ui/Select.tsx ---
+    const Select = ({ id, label, value, onChange, options, required }) => {
       return (
-        <button className="calc-btn" {...props}>
-          {children}
-        </button>
+        React.createElement("div", { className: "mb-4" },
+          React.createElement("label", { htmlFor: id, className: "block text-sm font-medium text-gray-700 mb-1" },
+            label, " ", required && React.createElement("span", { className: "text-red-500" }, "*")
+          ),
+          React.createElement("select", {
+            id: id,
+            name: id,
+            value: value,
+            onChange: onChange,
+            required: required,
+            className: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm"
+          },
+            options.map(option => (
+              React.createElement("option", { key: option.value, value: option.value, disabled: option.value === '' },
+                option.label
+              )
+            ))
+          )
+        )
       );
-    }
+    };
 
-    function AccordionItem({ title, children, initiallyOpen = false }) {
+    // --- components/ui/Button.tsx ---
+    const Button = ({ onClick, type = 'button', children, className = '', disabled = false }) => {
+      return (
+        React.createElement("button", {
+          type: type,
+          onClick: onClick,
+          disabled: disabled,
+          className: `px-4 py-2 font-semibold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${className}`
+        },
+          children
+        )
+      );
+    };
+
+    // --- components/ui/AccordionItem.tsx ---
+    const AccordionItem = ({ title, children, initiallyOpen = false }) => {
       const [isOpen, setIsOpen] = useState(initiallyOpen);
-      return (
-        <div className="accordion-item">
-          <button
-            className="accordion-header"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-expanded={isOpen}
-            type="button"
-          >
-            <span>{title}</span>
-            <span className="accordion-icon" style={{transform:isOpen?'rotate(90deg)':'rotate(0deg)'}}>
-              <svg width="18" height="18" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9" fill="none" stroke="#3730a3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </span>
-          </button>
-          {isOpen && (
-            <div className="accordion-content">{children}</div>
-          )}
-        </div>
-      );
-    }
 
-    // --- Risk Score Calculation Functions ---
-    function getAgePoints(age) {
-      if (age === null) return 0;
-      if (age < 50) return 0;
-      if (age <= 59) return 1;
-      if (age <= 69) return 2;
-      if (age <= 79) return 2;
-      if (age <= 89) return 2;
-      return 3;
-    }
-    function getSexPoints(sex) {
-      if (sex === 'Female') return 3;
-      return 0;
-    }
-    function getBaselineScrPoints(scr) {
-      if (scr === null) return 0;
-      if (scr < 0.6) return 0;
-      if (scr < 0.7) return 1;
-      if (scr < 0.8) return 1;
-      if (scr < 0.9) return 2;
-      if (scr < 1.0) return 2;
-      if (scr < 1.1) return 3;
-      if (scr < 1.2) return 3;
-      if (scr < 1.3) return 4;
-      return 5;
-    }
-    function getAlbuminuriaPoints(albuminuria) {
-      switch (albuminuria) {
-        case 'Mild/None': return 0;
-        case 'Moderate': return 1;
-        case 'Heavy': return 3;
-        default: return 0;
-      }
-    }
-    function getAkiStagePoints(akiStage) {
-      if (akiStage === 0 || akiStage === 1) return 0;
-      if (akiStage === 2) return 1;
-      if (akiStage === 3) return 3;
-      return 0;
-    }
-    function getDischargeScrPoints(scr) {
-      if (scr === null) return 0;
-      if (scr < 1.0) return 0;
-      if (scr < 1.3) return 3;
-      if (scr < 1.6) return 6;
-      if (scr < 1.9) return 7;
-      return 11;
-    }
-    function calculateTotalPointScore(patientData, akiStage) {
-      let score = 0;
-      score += getAgePoints(patientData.age);
-      score += getSexPoints(patientData.sex);
-      score += getBaselineScrPoints(patientData.baselineScr);
-      score += getAlbuminuriaPoints(patientData.albuminuria);
-      score += getAkiStagePoints(akiStage);
-      score += getDischargeScrPoints(patientData.dischargeScr);
-      return score;
-    }
-    function getRiskFromPointScore(score) {
-      if (score <= 8) return 0.5;
-      if (score <= 14) return 3.0;
-      if (score <= 17) return 7.5;
-      if (score === 18) return 13.04;
-      if (score === 19) return 17.34;
-      if (score === 20) return 22.7;
-      if (score === 21) return 29.12;
-      if (score === 22) return 36.5;
-      if (score === 23) return 44.58;
-      if (score === 24) return 52.8;
-      if (score === 25) return 61.17;
-      if (score === 26) return 67.0;
-      if (score === 27) return 72.0;
-      if (score >= 28) return 75.0;
-      return 75.0;
-    }
-    function getRiskCategory(totalPointScore) {
+      return (
+        React.createElement("div", { className: "border border-gray-300 rounded-md mb-4 shadow-sm bg-white" },
+          React.createElement("button", {
+            onClick: () => setIsOpen(!isOpen),
+            className: "flex justify-between items-center w-full p-4 text-left text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring focus-visible:ring-indigo-500 focus-visible:ring-opacity-75 rounded-t-md",
+            "aria-expanded": isOpen
+          },
+            React.createElement("span", null, title),
+            React.createElement("svg", {
+              className: `w-5 h-5 transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`,
+              fill: "none",
+              stroke: "currentColor",
+              viewBox: "0 0 24 24",
+              xmlns: "http://www.w3.org/2000/svg"
+            },
+              React.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M19 9l-7 7-7-7" })
+            )
+          ),
+          isOpen && (
+            React.createElement("div", { className: "p-4 border-t border-gray-200 bg-gray-50 rounded-b-md" },
+              children
+            )
+          )
+        )
+      );
+    };
+    
+    // --- services/guidanceService.ts ---
+    const getRiskCategory = (totalPointScore) => {
       if (totalPointScore < 15) return 'Low';
       if (totalPointScore <= 19) return 'Moderate';
       return 'High';
-    }
-    function addDaysToDate(dateString, days) {
+    };
+
+    const addDaysToDate = (dateString, days) => {
       if (!dateString) return "Date not specified";
       try {
         const date = new Date(dateString);
-        date.setUTCDate(date.getUTCDate() + days);
+        // Adjust for potential timezone offset issues by working with UTC dates for calculations
+        // and then formatting to local string. This is a common gotcha with date math.
+        date.setUTCDate(date.getUTCDate() + days); 
         return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
       } catch (e) {
+        console.error("Error in addDaysToDate:", e, "Input:", dateString);
         return "Invalid date";
       }
-    }
-    function generateFollowUpSchedule(dischargeDate, riskCategory) {
+    };
+
+    const generateFollowUpSchedule = (dischargeDate, riskCategory) => {
       if (!dischargeDate) {
-        return [{ timeframe: "Discharge Date Not Provided", action: "Cannot generate specific follow-up dates without hospital discharge date.", notes: "Please provide a discharge date for a tailored plan." }];
+        return [{ timeframe: "Discharge Date Not Provided", action: "Cannot generate specific follow-up dates without hospital discharge date.", notes: "Please provide a discharge date for a tailored schedule."}];
       }
+
       const schedule = [];
+
       schedule.push({
         timeframe: "Week 1-2 Post-Discharge",
         action: "Initial follow-up with Nephrologist/Primary Care Provider.",
@@ -452,6 +260,7 @@
         targetDate: "Weekly",
         notes: "Essential to track kidney function trend."
       });
+
       if (riskCategory === 'Low') {
         schedule.push({
           timeframe: "Month 1-3 Post-Discharge",
@@ -467,11 +276,11 @@
         });
         schedule.push({
           timeframe: "By ~60 Days Post-Discharge",
-          action: "Key reassessment. If no significant kidney function recovery, discuss potential transition to ESKD management pathway with your nephrologist.",
+          action: "Key reassessment point. If no significant kidney function recovery, discuss potential transition to ESKD management pathway with your nephrologist.",
           targetDate: `Around ${addDaysToDate(dischargeDate, 60)}`,
           notes: "This depends on individual recovery phenotype assessed at discharge."
         });
-      } else {
+      } else { // High Risk
         schedule.push({
           timeframe: "Month 1 Post-Discharge",
           action: "Frequent nephrology follow-ups (e.g., weekly to bi-weekly).",
@@ -479,34 +288,34 @@
         });
         schedule.push({
           timeframe: "By ~30-60 Days Post-Discharge",
-          action: "Critical reassessment. If no evidence of kidney function recovery, discuss proactive transition to ESKD management and long-term kidney care options.",
+          action: "Critical reassessment point. If no evidence of kidney function recovery, discuss proactive transition to ESKD management and long-term kidney care options (dialysis access, transplant evaluation) with your nephrologist.",
           targetDate: `Around ${addDaysToDate(dischargeDate, 30)} to ${addDaysToDate(dischargeDate, 60)}`,
           notes: "Early planning is crucial. Actual timing depends on individual recovery phenotype."
         });
       }
+      
       schedule.push({
         timeframe: "Long-term",
         action: "Ongoing follow-up as determined by your healthcare team, even if initial recovery occurs, due to increased future kidney risk.",
         notes: "Protect your kidneys: manage blood pressure, diabetes (if present), avoid kidney-harming medications without advice."
       });
-      return schedule;
-    }
 
-    // --- Guidance Data & Logic ---
-    function getGuidance(riskPercent, totalPointScore, patientData, akiStage, userRole) {
+      return schedule;
+    };
+
+    const getGuidance = (riskPercent, totalPointScore, patientData, akiStage, userRole) => {
       const riskCategory = getRiskCategory(totalPointScore);
       const guidance = [];
 
       guidance.push({
         riskCategory: 'General',
         title: 'Important Disclaimer',
-        structuredContent: [{
-          heading: "Key Points",
-          points: [
-            "This information is for educational purposes and is not a substitute for professional medical advice.",
-            "Always consult with your healthcare provider for any health concerns or before making any changes to your treatment.",
-            "This toolkit is based on the ASN Kidney Health Guidance on the Outpatient Management of Patients with Dialysis-Requiring Acute Kidney Injury and the JAMA 2017 paper by James MT et al."
-          ]
+        structuredContent: [{ // Using structuredContent for consistency
+            heading: "Key Points",
+            points: [
+              "This information is for educational purposes and is not a substitute for professional medical advice. Always consult with your healthcare provider for any health concerns or before making any decisions related to your health or treatment.",
+              "This toolkit is based on the ASN Kidney Health Guidance on the Outpatient Management of Patients with Dialysis-Requiring Acute Kidney Injury and the JAMA 2017 paper by James MT et al. It is intended for patients who meet specific criteria (e.g., discharged after AKI, baseline eGFR > 45 mL/min/1.73 m²).",
+            ]
         }],
         source: "General Medical Advice Principle"
       });
@@ -528,18 +337,18 @@
           title: `Guidance for Moderate Predicted CKD Risk (Score: ${totalPointScore}, Risk: ${riskPercent.toFixed(1)}%)`,
           details: [
             "Focus: Promoting kidney function recovery while being vigilant for signs of CKD.",
-            "Monitoring: Close monitoring for kidney function recovery. Your point score suggests a moderate likelihood of progression to advanced CKD, warranting careful follow-up. Transition to ESKD may be considered if recovery is not observed.",
+            "Monitoring: Close monitoring for kidney function recovery. Your point score suggests a moderate likelihood of progression to advanced CKD, warranting careful follow-up. Transition to ESKD management might be considered if no recovery by ~60 days (phenotype dependent).",
             "Action: Maintain close communication with your healthcare team. Adherence to prescribed treatments and lifestyle modifications is key."
           ],
           source: "Risk stratification based on James MT et al., JAMA 2017, eTable 7. General recovery/monitoring concepts from ASN Kidney Health Guidance, Table 2 & Figure 1."
         });
-      } else {
+      } else { // High Risk
         guidance.push({
           riskCategory: 'High',
           title: `Guidance for High Predicted CKD Risk (Score: ${totalPointScore}, Risk: ${riskPercent.toFixed(1)}%)`,
           details: [
             "Focus: Initial care focused on promoting kidney function recovery, but with a higher preparedness for potential long-term kidney issues.",
-            "Monitoring: Close monitoring is essential. Your high point score indicates a significant likelihood of progression to advanced CKD. Discuss the possibility of early transition to ESRD (End-Stage Renal Disease) with your provider.",
+            "Monitoring: Close monitoring is essential. Your high point score indicates a significant likelihood of progression to advanced CKD. Discuss the possibility of early transition to ESRD (End-Stage Renal Disease) management with your doctor if recovery is not evident (e.g., within ~30-90 days, phenotype dependent).",
             "Action: Proactive discussions about long-term kidney care options, including different types of dialysis or transplant evaluation, may be necessary."
           ],
           source: "Risk stratification based on James MT et al., JAMA 2017, eTable 7. General recovery/monitoring concepts from ASN Kidney Health Guidance, Table 2 & Figure 1."
@@ -547,147 +356,301 @@
       }
 
       if (userRole === 'patient') {
+        const patientRoadmapStructuredContent = [
+          {
+            heading: "1. Managing Your Medications",
+            points: [
+              "Medication Review: Your nurse and doctor will help review all your medications, including over-the-counter ones and supplements. Make sure they know everything you take.",
+              "Kidney-Safe Medications: Avoid drugs that can harm kidneys (like NSAIDs - ibuprofen, naproxen) unless your doctor approves.",
+              "Medication Timing: Discuss when to take your medications, especially blood pressure pills, in relation to any dialysis treatments."
+            ]
+          },
+          {
+            heading: "2. Tracking Your Fluids & Weight",
+            points: [
+              "Normal Weight: Your team may ask about your usual weight before you got sick.",
+              "Daily Weights: Monitoring your weight daily can be helpful.",
+              "Urine Output: Let your team know if you notice changes in how much you urinate (increase or decrease).",
+              "Fluid Intake: Follow advice on how much fluid to drink.",
+              "Appetite & Diet: Report changes in appetite. Follow any special dietary advice (e.g., for salt, potassium).",
+              "Swelling (Edema): Check for swelling in your legs, ankles, or other areas and report it."
+            ]
+          },
+          {
+            heading: "3. Blood Pressure Monitoring",
+            points: [
+              "Clinic Checks: Your BP will be checked at appointments and dialysis sessions.",
+              "Home Readings: If you check BP at home, share these readings with your team.",
+              "Low BP Symptoms: Report dizziness or lightheadedness, which could be signs of low BP, especially after dialysis."
+            ]
+          },
+          {
+            heading: "4. Understanding Your Lab Tests",
+            points: [
+              "Regular Blood Tests: Expect frequent blood tests (e.g., weekly at first) to check kidney function (creatinine, BUN, electrolytes).",
+              "Baseline Labs: Initial labs help establish your starting point after AKI and track progress."
+            ]
+          },
+          {
+            heading: "5. Anemia (Low Blood Count) Monitoring",
+            points: [
+              "Anemia Checks: Blood tests (hemoglobin, iron studies) will monitor for anemia.",
+              "Individualized Treatment: If needed, treatment for anemia (like iron or ESA shots) will be tailored to you. Standard protocols may not apply initially."
+            ]
+          },
+          {
+            heading: "6. Bone Health Considerations",
+            points: [
+              "Bone Mineral Labs: Tests for calcium, phosphorus, parathyroid hormone (PTH), and vitamin D will be done as needed.",
+              "Vitamin D: If your vitamin D is low, it will be treated.",
+              "Phosphate Binders: These are used cautiously, usually only if your phosphorus level is very high (e.g., >8 mg/dL)."
+            ]
+          },
+          {
+            heading: "7. Dialysis Access Care (If Applicable)",
+            points: [
+              "Catheter Care: If you have a dialysis catheter (CVC), it needs careful handling to prevent infection. Follow all care instructions meticulously. Report any redness, pain, or discharge at the site immediately."
+            ]
+          }
+        ];
+
         guidance.push({
           riskCategory: 'General',
           title: 'Patient Roadmap: Your Guide to Post-AKI Care',
-          structuredContent: [
-            {
-              heading: "1. Managing Your Medications",
-              points: [
-                "Your nurse and doctor will help review all your medications, including over-the-counter ones and supplements.",
-                "Avoid drugs that can harm kidneys (like NSAIDs - ibuprofen, naproxen) unless your doctor approves.",
-                "Discuss when to take your medications, especially blood pressure pills, in relation to any dialysis treatments."
-              ]
-            },
-            {
-              heading: "2. Tracking Your Fluids & Weight",
-              points: [
-                "Your team may ask about your usual weight before you got sick.",
-                "Monitoring your weight daily can be helpful.",
-                "Let your team know if you notice changes in how much you urinate.",
-                "Follow advice on how much fluid to drink."
-              ]
-            }
-          ],
+          structuredContent: patientRoadmapStructuredContent,
           followUpSchedule: generateFollowUpSchedule(patientData.dischargeDate, riskCategory),
           source: "Derived from Supplement 2, ASN Kidney Health Guidance & general patient care principles."
         });
       } else if (userRole === 'provider') {
+        const clinicalCarePathwayStructuredContent = [
+          {
+            heading: "Stage 1: Hospital Discharge Planning",
+            points: [
+              "Confirm patient readiness for discharge; identify if ongoing dialysis is required.",
+              "Educate patient/family on AKI, recovery expectations, and provide psychosocial support assessment.",
+              "Estimate patient's recovery phenotype (Low, Moderate, High) to guide outpatient monitoring duration if recovery doesn't occur.",
+              "Ensure a 'warm handoff' to the outpatient nephrology and dialysis team (if applicable), including AKI-D specific orders and transfer of medical records."
+            ]
+          },
+          {
+            heading: "Stage 2: Outpatient Dialysis Orientation (if applicable)",
+            points: [
+              "Introduce interdisciplinary team (IDT) and establish an initial AKI-D specific care plan.",
+              "Provide ongoing AKI-specific education.",
+              "Continuously assess psychosocial needs and goals of care.",
+              "Perform thorough medication reconciliation and management, avoiding nephrotoxins."
+            ]
+          },
+          {
+            heading: "Stage 3: Individualized AKI-Specific Dialysis Care",
+            points: [
+              "Conduct frequent IDT meetings (at least monthly).",
+              "Perform weekly lab monitoring (serum creatinine, BUN, electrolytes, timed urine collection for CrCl/urea clearance if producing urine).",
+              "Assess ultrafiltration goals at every dialysis session, aiming to avoid hypotension.",
+              "Continuously monitor for clinical and laboratory evidence of kidney function recovery."
+            ]
+          },
+          {
+            heading: "Stage 4: Monitoring for Kidney Function Recovery",
+            points: [], 
+            isSubSection: false 
+          },
+          {
+            heading: "Evidence of Recovery?",
+            points: [
+              "YES (e.g., increasing urine output, rising CrCl, decreasing pre-dialysis SCr): Consider a supervised weaning trial (reduced HD frequency/duration). Monitor closely. If successful, plan HD discontinuation with a warm handoff to a clinic nephrologist for ongoing CKD management.",
+              "NO: Proceed based on the pre-determined discharge recovery phenotype to guide duration of monitoring before considering ESKD transition."
+            ],
+            isSubSection: true
+          },
+          {
+            heading: "Stage 5: Duration of Monitoring if No Recovery (ESKD Transition Based on Discharge Recovery Phenotype)",
+            points: [], 
+            isSubSection: false
+          },
+          {
+            heading: "LOW Recovery Phenotype at Discharge:",
+            points: ["If no significant evidence of kidney function recovery by ~30 days post-discharge, consider transition to ESKD designation and care. Reassess goals of care with patient/family."],
+            isSubSection: true
+          },
+          {
+            heading: "MODERATE Recovery Phenotype at Discharge:",
+            points: ["If no significant evidence of kidney function recovery by ~60 days post-discharge, consider transition to ESKD designation and care. Reassess goals of care."],
+            isSubSection: true
+          },
+          {
+            heading: "HIGH Recovery Phenotype at Discharge:",
+            points: ["If no significant evidence of kidney function recovery by ~90 days post-discharge, consider transition to ESKD designation and care. Reassess goals of care."],
+            isSubSection: true
+          },
+          {
+            heading: "Following ESKD Designation:",
+            points: ["Discuss and plan for long-term kidney replacement therapy options (e.g., permanent vascular access placement, peritoneal dialysis, transplant evaluation)."],
+            isSubSection: true
+          }
+        ];
         guidance.push({
           riskCategory: 'General',
           title: 'Clinical Care Pathway for Healthcare Providers',
-          structuredContent: [
-            {
-              heading: "Stage 1: Hospital Discharge Planning",
-              points: [
-                "Confirm patient readiness for discharge; identify if ongoing dialysis is required.",
-                "Educate patient/family on AKI, recovery expectations, and provide psychosocial support assessment.",
-                "Estimate patient's recovery phenotype (Low, Moderate, High) to guide outpatient monitoring duration if recovery doesn't occur.",
-                "Ensure a 'warm handoff' to the outpatient nephrology and dialysis team (if applicable), including AKI-D specific orders and transfer of medical records."
-              ]
-            }
-          ],
+          structuredContent: clinicalCarePathwayStructuredContent,
           source: "ASN Kidney Health Guidance, Figure 1 and additional flowchart detail on monitoring duration."
         });
       }
 
+      const generalCareAccordion = [
+        { heading: "Education & Self-Management", points: ["Understand your condition, medications (purpose, dose, timing), and dietary/fluid restrictions. Know warning signs to report."] },
+        { heading: "Medication Adherence & Safety", points: ["Take all medications as prescribed. Crucially, AVOID nephrotoxic drugs (e.g., NSAIDs like ibuprofen/naproxen, certain antibiotics) unless specifically approved by your nephrologist. Inform all healthcare providers about your AKI history."] },
+        { heading: "Dietary Management", points: ["Follow specific dietary advice regarding sodium, potassium, phosphorus, protein, and fluids. This may change as kidney function recovers."] },
+        { heading: "Symptom Monitoring", points: ["Report any new or worsening symptoms immediately: significant changes in urine output (more or less), new swelling (edema), shortness of breath, excessive fatigue, dizziness, cramping, nausea/vomiting."] },
+        { heading: "Blood Pressure (BP) Control", points: ["Monitor BP as advised. The target may be less strict initially (e.g., <180 mmHg systolic pre-dialysis) to avoid hypotension that could impair kidney recovery. Discuss your target BP with your doctor."] },
+        { heading: "Fluid Management & Weight", points: ["Be mindful of fluid intake. Monitor your weight regularly (e.g., daily). Report rapid weight gain or increasing edema."] },
+        { heading: "Follow-up Appointments", points: ["Attend ALL scheduled appointments with your nephrologist, primary care doctor, and dialysis unit (if applicable). Weekly lab tests are common initially."] },
+        { heading: "Vascular Access Care (if on HD)", points: ["If you have a dialysis catheter or other access, follow care instructions meticulously to prevent infection. Report any signs of infection (redness, pain, discharge, fever) immediately."] }
+      ];
       guidance.push({
         riskCategory: 'General',
         title: 'General Post-Discharge AKI Care',
-        structuredContent: [
-          { heading: "Education & Self-Management", points: ["Understand your condition, medications, and dietary/fluid restrictions. Know warning signs to report."] },
-          { heading: "Medication Adherence & Safety", points: ["Take all medications as prescribed. Avoid nephrotoxic drugs unless advised."] },
-          { heading: "Dietary Management", points: ["Follow specific dietary advice regarding sodium, potassium, phosphorus, protein, and fluids."] }
-        ],
+        structuredContent: generalCareAccordion,
         source: "Fig. 1 & Table 4, ASN Kidney Health Guidance"
       });
 
+      if (patientData.inHospitalDialysis) {
+        const dialysisConsiderationsAccordion = [
+          { heading: "Dialysis Weaning Process", points: ["If your native kidney function shows signs of significant and sustained improvement (e.g., increasing urine output, improving creatinine clearance), your nephrologist will discuss a plan for tapering and potentially stopping dialysis treatments. This is a carefully monitored process."] },
+          { heading: "Dialysis Adequacy", points: ["If you continue to require outpatient dialysis, your healthcare team will monitor the adequacy of your treatments (e.g., Kt/V for hemodialysis) to ensure waste products are being effectively removed."] }
+        ];
+        guidance.push({
+          riskCategory: 'General',
+          title: 'Specific Considerations if you required Dialysis',
+          structuredContent: dialysisConsiderationsAccordion,
+          source: "Table 4, ASN Kidney Health Guidance"
+        });
+      }
+      
+      const lifestyleAccordion = [
+        { heading: "Smoking Cessation", points: ["Avoid smoking and exposure to secondhand smoke. Smoking can worsen kidney disease and overall cardiovascular health."] },
+        { heading: "Physical Activity", points: ["Engage in regular physical activity as tolerated and advised by your healthcare team. This can help with overall recovery and well-being."] },
+        { heading: "Psychosocial Well-being", points: ["Having AKI and potentially needing dialysis can be stressful. Seek support from family, friends, or support groups. Discuss any feelings of anxiety, depression, or overwhelm with your doctor or a mental health professional."] }
+      ];
+       guidance.push({
+        riskCategory: 'General',
+        title: 'Lifestyle and Self-Care',
+        structuredContent: lifestyleAccordion,
+        source: "General Health Principles & ASN Guidance"
+      });
+
+      const akiDCarePlanAccordion = [
+        { heading: "Vascular Access Management", points: ["Regular assessment of dialysis access site (if applicable). Patient education on signs of infection or complications."] },
+        { heading: "Dialysis Adequacy & Kidney Function Monitoring", points: ["Tracking trends in eGFR (if applicable off dialysis), serum creatinine, BUN, and urine output/clearance to assess native kidney function and/or dialysis effectiveness."] },
+        { heading: "Laboratory Monitoring", points: ["Regular (often weekly initially) AKI-specific lab panels to monitor kidney function, electrolytes, and other relevant parameters."] },
+        { heading: "Anemia Management", points: ["Individualized approach to using Erythropoiesis-Stimulating Agents (ESAs) and iron, avoiding protocolized treatment typical for stable ESKD patients. Goal is often to prevent transfusions."] },
+        { heading: "Volume Status Assessment", points: ["Continuous assessment of volume status through physical exam (BP, edema, lung sounds), patient-reported urine output, interdialytic weight gains (if on HD), and response to ultrafiltration. Aim to avoid both overload and hypovolemia."] },
+        { heading: "Nutrition and Diet", points: ["Assessment of nutritional status (e.g., albumin, appetite). Dietary education tailored to AKI recovery, focusing on adequate protein and calories, and managing potassium/phosphorus as needed. Diet may change with recovery."] },
+        { heading: "Bone and Mineral Disease (BMD)", points: ["Monitoring calcium, phosphorus, PTH, and Vitamin D. Cautious use of phosphate binders (often only for severe hyperphosphatemia, e.g., >8 mg/dL) and Vitamin D analogs due to risk of hypophosphatemia or hypercalcemia during recovery phase."] },
+        { heading: "AKI Diagnosis & Recovery Trajectory", points: ["Ongoing assessment of the likelihood and timeline for kidney function recovery versus progression to CKD or ESKD. Regular communication with patient/family about prognosis."] },
+        { heading: "Psychosocial Support", points: ["Addressing the emotional, social, and financial challenges associated with AKI and its treatment. IDT involvement is key."] },
+        { heading: "Medication Review & Nephrotoxin Avoidance", points: ["Regular, comprehensive medication reconciliation (including OTCs and herbals). Patient education on avoiding common nephrotoxic medications."] },
+        { heading: "CKD Education & Transition Planning", points: ["If recovery is incomplete, education on CKD stages and management. If transitioning to ESKD, timely discussion of long-term kidney replacement therapy (KRT) options."] }
+      ];
+       guidance.push({
+        riskCategory: 'General',
+        title: 'AKI-D Care Plan Overview', 
+        structuredContent: akiDCarePlanAccordion,
+        source: "Supplement 1, ASN Kidney Health Guidance"
+      });
+
       return guidance;
-    }
+    };
 
-    // --- Guidance Display ---
-    function GuidanceDisplay({ guidance, userRole }) {
-      if (!guidance || guidance.length === 0) return null;
-      const riskSpecific = guidance.find(x => ['Low','Moderate','High'].includes(x.riskCategory));
-      const roadmap = userRole==='patient' ? guidance.find(x=>x.title.startsWith('Patient Roadmap')) : null;
-      const pathway = userRole==='provider'? guidance.find(x=>x.title.startsWith('Clinical Care Pathway')) : null;
-      const generalAccordions = guidance.filter(x =>
-        x.riskCategory==='General' && x.title!==(roadmap?.title||'') && x.title!==(pathway?.title||'')
-      );
-      return (
-        <div>
-          {riskSpecific && (
-            <div className="results-card" style={{marginTop:"1.7em"}}>
-              <h3 className="section-title">{riskSpecific.title}</h3>
-              <ul style={{textAlign:'left',maxWidth:680,margin:'0 auto 0.6em auto'}}>
-                {riskSpecific.details && riskSpecific.details.map((pt,i)=>(
-                  <li key={i}>{pt}</li>
-                ))}
-              </ul>
-              <div className="acc-source">{riskSpecific.source}</div>
-            </div>
-          )}
-          {roadmap && (
-            <div className="roadmap-card">
-              <div className="roadmap-title">{roadmap.title}</div>
-              {roadmap.followUpSchedule && (
-                <div className="followup-section">
-                  <h4>Your Tailored Follow-up Schedule:</h4>
-                  {roadmap.followUpSchedule.map((item,i)=>(
-                    <div key={i} className="followup-item">
-                      <div className="followup-date">{item.timeframe}{item.targetDate?` (${item.targetDate})`:''}</div>
-                      <div>- {item.action}</div>
-                      {item.notes && <div style={{fontSize:'0.95em',color:'#64748b'}}>{item.notes}</div>}
-                    </div>
-                  ))}
-                </div>
-              )}
-              {roadmap.structuredContent && roadmap.structuredContent.map((sec,idx)=>
-                <div key={idx} style={{marginBottom:'1.1em'}}>
-                  <div className="acc-section-head">{sec.heading}</div>
-                  <ul className="acc-ul">
-                    {sec.points.map((pt,i)=><li key={i}>{pt}</li>)}
-                  </ul>
-                </div>
-              )}
-              <div className="acc-source">{roadmap.source}</div>
-            </div>
-          )}
-          {pathway && (
-            <div className="carepathway-card">
-              <div className="carepathway-title">{pathway.title}</div>
-              {pathway.structuredContent && pathway.structuredContent.map((sec,idx)=>
-                <div key={idx} style={{marginBottom:'1.1em'}}>
-                  <div className="acc-section-head">{sec.heading}</div>
-                  <ul className="acc-ul">
-                    {sec.points.map((pt,i)=><li key={i}>{pt}</li>)}
-                  </ul>
-                </div>
-              )}
-              <div className="acc-source">{pathway.source}</div>
-            </div>
-          )}
-          <div className="accordion">
-            {generalAccordions.map((item,idx)=>
-              <AccordionItem key={idx} title={item.title}>
-                {item.structuredContent && item.structuredContent.map((sec,ii)=>
-                  <div key={ii} style={{marginBottom:'0.7em'}}>
-                    <div className="acc-section-head">{sec.heading}</div>
-                    <ul className="acc-ul">
-                      {sec.points.map((pt,iii)=><li key={iii}>{pt}</li>)}
-                    </ul>
-                  </div>
-                )}
-                <div className="acc-source">{item.source}</div>
-              </AccordionItem>
-            )}
-          </div>
-        </div>
-      );
-    }
 
-    // --- Main Calculator Form ---
-    function RiskCalculatorForm({ onCalculated }) {
+    // --- components/RiskCalculatorForm.tsx ---
+    const getAgePoints = (age) => {
+      if (age === null) return 0;
+      if (age < 50) return 0;
+      if (age <= 59) return 1;
+      if (age <= 69) return 2;
+      if (age <= 79) return 2;
+      if (age <= 89) return 2;
+      return 3;
+    };
+
+    const getSexPoints = (sex) => {
+      if (sex === 'Female') return 3;
+      return 0;
+    };
+
+    const getBaselineScrPoints = (scr) => {
+      if (scr === null) return 0;
+      if (scr < 0.6) return 0;
+      if (scr < 0.7) return 1;
+      if (scr < 0.8) return 1;
+      if (scr < 0.9) return 2;
+      if (scr < 1.0) return 2;
+      if (scr < 1.1) return 3;
+      if (scr < 1.2) return 3;
+      if (scr < 1.3) return 4;
+      return 5;
+    };
+
+    const getAlbuminuriaPoints = (albuminuria) => {
+      switch (albuminuria) {
+        case 'Mild/None': return 0;
+        case 'Moderate': return 1;
+        case 'Heavy': return 3;
+        default: return 0;
+      }
+    };
+
+    const getAkiStagePoints = (akiStage) => {
+      if (akiStage === 0 || akiStage === 1) return 0;
+      if (akiStage === 2) return 1;
+      if (akiStage === 3) return 3;
+      return 0;
+    };
+
+    const getDischargeScrPoints = (scr) => {
+      if (scr === null) return 0;
+      if (scr < 1.0) return 0;
+      if (scr < 1.3) return 3;
+      if (scr < 1.6) return 6;
+      if (scr < 1.9) return 7;
+      return 11;
+    };
+
+    const calculateTotalPointScore = (patientData, akiStage) => {
+      let score = 0;
+      score += getAgePoints(patientData.age);
+      score += getSexPoints(patientData.sex);
+      score += getBaselineScrPoints(patientData.baselineScr);
+      score += getAlbuminuriaPoints(patientData.albuminuria);
+      score += getAkiStagePoints(akiStage);
+      score += getDischargeScrPoints(patientData.dischargeScr);
+      return score;
+    };
+
+    const getRiskFromPointScore = (score) => {
+      // Based on Figure 3C from James MT et al., JAMA 2017 and user-provided refinements
+      if (score <= 8) return 0.5;    // Risk <1%
+      if (score <= 14) return 3.0;   // Risk 1-<5%
+      if (score <= 17) return 7.5;   // Risk 5-<10%
+
+      // User-provided specific values for higher scores
+      if (score === 18) return 13.04;
+      if (score === 19) return 17.34;
+      if (score === 20) return 22.7;
+      if (score === 21) return 29.12;
+      if (score === 22) return 36.5;
+      if (score === 23) return 44.58;
+      if (score === 24) return 52.8; 
+      if (score === 25) return 61.17;
+
+      if (score === 26) return 67.0;
+      if (score === 27) return 72.0;
+      if (score >= 28) return 75.0; 
+      return 75.0; // Default for scores > 28 or unexpected values
+    };
+
+    const RiskCalculatorForm = ({ onRiskCalculated }) => {
       const [patientData, setPatientData] = useState({
         age: null,
         sex: '',
@@ -698,9 +661,11 @@
         dischargeScr: null,
         dischargeDate: null,
       });
+
       const [calculatedAkiStage, setCalculatedAkiStage] = useState(null);
       const [calculatedRisk, setCalculatedRisk] = useState(null);
       const [totalPoints, setTotalPoints] = useState(null);
+      const [showResult, setShowResult] = useState(false);
 
       const handleInputChange = useCallback((e) => {
         const { name, value, type } = e.target;
@@ -708,6 +673,7 @@
           ...prev,
           [name]: type === 'number' ? (value === '' ? null : parseFloat(value)) : value,
         }));
+        setShowResult(false);
       }, []);
 
       const handleSelectChange = useCallback((e) => {
@@ -716,6 +682,7 @@
           ...prev,
           [name]: value,
         }));
+        setShowResult(false);
       }, []);
 
       const handleDialysisChange = useCallback((e) => {
@@ -723,131 +690,484 @@
           ...prev,
           inHospitalDialysis: e.target.value === 'Yes',
         }));
+        setShowResult(false);
       }, []);
 
       const calculateAkiStage = useMemo(() => {
         const { baselineScr, peakScrInHospital, inHospitalDialysis } = patientData;
-        if (baselineScr === null || peakScrInHospital === null || baselineScr <= 0) return 0;
+
+        if (baselineScr === null || peakScrInHospital === null || baselineScr <= 0) return 0; 
+
         const scrRatio = peakScrInHospital / baselineScr;
         const scrIncrease = peakScrInHospital - baselineScr;
+        
         if (inHospitalDialysis) return 3;
         if (peakScrInHospital >= 4.0) return 3;
-        if (scrRatio >= 3.0) return 3;
-        if (scrRatio >= 2.0 && scrRatio < 3.0) return 2;
-        if (scrIncrease >= 0.3 || (scrRatio >= 1.5 && scrRatio < 2.0)) return 1;
-        return 0;
+        if (scrRatio >= 3.0) return 3; 
+        
+        if (scrRatio >= 2.0 && scrRatio < 3.0) { 
+            return 2;
+        }
+        if (scrIncrease >= 0.3 || (scrRatio >= 1.5 && scrRatio < 2.0)) {
+            return 1;
+        }
+        return 0; 
       }, [patientData]);
 
-      function handleSubmit(e) {
+      const handleSubmit = (e) => {
         e.preventDefault();
+
         if (patientData.baselineScr !== null && (patientData.baselineScr < 0.28 || patientData.baselineScr > 1.82)) {
-          alert("Baseline Serum Creatinine must be between 0.28 and 1.82 mg/dL.\n\nThis calculator is for those hospitalized with AKI and baseline eGFR > 45 mL/min/1.73 m².");
+          alert("Baseline Serum Creatinine must be between 0.28 and 1.82 mg/dL.\\n\\nThis calculator is for those hospitalized with AKI and baseline eGFR > 45 mL/min/1.73 m².");
           return;
         }
-        if (!patientData.dischargeDate) {
-          alert("Please enter the Hospital Discharge Date to generate a follow-up plan.");
-          return;
-        }
+         if (!patientData.dischargeDate) {
+           alert("Please enter the Hospital Discharge Date to generate a follow-up plan.");
+           return;
+         }
+
         const currentAkiStage = calculateAkiStage;
         setCalculatedAkiStage(currentAkiStage);
+
         const points = calculateTotalPointScore(patientData, currentAkiStage);
         setTotalPoints(points);
+
         const risk = getRiskFromPointScore(points);
         setCalculatedRisk(risk);
-        onCalculated(risk, points, patientData, currentAkiStage);
+
+        onRiskCalculated(risk, points, patientData, currentAkiStage);
+        setShowResult(true);
+      };
+
+      return (
+        React.createElement("div", { className: "p-6 md:p-8 bg-white shadow-xl rounded-lg" },
+          React.createElement("h2", { className: "text-xl font-semibold text-gray-700 mb-6" }, "Enter Patient Information"),
+          React.createElement("form", { onSubmit: handleSubmit, className: "space-y-6" },
+            React.createElement("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-x-6" },
+              React.createElement(Input, { id: "age", label: "Age (years)", type: "number", value: patientData.age ?? '', onChange: handleInputChange, required: true, min: 0 }),
+              React.createElement(Select, { id: "sex", label: "Sex", value: patientData.sex, onChange: handleSelectChange, options: SEX_OPTIONS, required: true })
+            ),
+            React.createElement("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-x-6" },
+              React.createElement(Input, { id: "baselineScr", label: "Baseline Serum Creatinine (0.28-1.82)", type: "number", value: patientData.baselineScr ?? '', onChange: handleInputChange, unit: "mg/dL", required: true, min: 0.28, max: 1.82, step: 0.01 }),
+              React.createElement(Input, { id: "peakScrInHospital", label: "Peak Serum Creatinine during hospital admission", type: "number", value: patientData.peakScrInHospital ?? '', onChange: handleInputChange, unit: "mg/dL", required: true, min: 0, step: 0.01})
+            ),
+            React.createElement("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-x-6" },
+              React.createElement(Input, { id: "dischargeScr", label: "Discharge Serum Creatinine", type: "number", value: patientData.dischargeScr ?? '', onChange: handleInputChange, unit: "mg/dL", required: true, min: 0, step: 0.01}),
+              React.createElement(Select, { id: "albuminuria", label: "Albuminuria", value: patientData.albuminuria, onChange: handleSelectChange, options: ALBUMINURIA_OPTIONS, required: true })
+            ),
+             React.createElement("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-x-6" },
+              React.createElement(Input, { id: "dischargeDate", label: "Hospital Discharge Date", type: "date", value: patientData.dischargeDate ?? '', onChange: handleInputChange, required: true }),
+              React.createElement("div", null,
+                 React.createElement("label", { htmlFor: "inHospitalDialysis", className: "block text-sm font-medium text-gray-700 mb-1" }, "In-hospital dialysis initiated?"),
+                 React.createElement(Select, { id: "inHospitalDialysis", label: "", value: patientData.inHospitalDialysis ? 'Yes' : 'No', onChange: handleDialysisChange, options: IN_HOSPITAL_DIALYSIS_OPTIONS })
+              )
+            ),
+            React.createElement(Button, { type: "submit", className: "w-full sm:w-auto" }, "Calculate Risk & View Options")
+          ),
+          showResult && calculatedRisk !== null && calculatedAkiStage !== null && totalPoints !== null && (
+            React.createElement("div", { className: "mt-8 p-6 bg-indigo-50 border-2 border-indigo-200 rounded-lg shadow-md" },
+              React.createElement("h3", { className: "text-xl font-bold text-indigo-700 mb-4" }, "Calculation Results"),
+              React.createElement("p", { className: "text-lg text-gray-800" },
+                "Calculated AKI Stage: ", React.createElement("span", { className: "font-semibold text-indigo-600" }, AKI_STAGE_DISPLAY[calculatedAkiStage])
+              ),
+              React.createElement("p", { className: "text-lg text-gray-800" },
+                "Total Risk Score: ", React.createElement("span", { className: "font-semibold text-indigo-600" }, totalPoints, " points")
+              ),
+              React.createElement("p", { className: "text-2xl font-bold text-gray-800 mt-2" },
+                "Predicted Risk of Advanced CKD: ", React.createElement("span", { className: "text-indigo-600" }, calculatedRisk.toFixed(2), "%")
+              ),
+              React.createElement("p", { className: "text-xs text-gray-500 mt-3" },
+                "Note: This risk is calculated based on the point-score system published in James MT et al., JAMA 2017;318(18):1787-1797, Figure 3. It is an estimate and not a guarantee of future health outcomes. Consult your healthcare provider for interpretation. Proceed to select your role to view tailored guidance."
+              )
+            )
+          )
+        )
+      );
+    };
+
+    // --- components/PatientRoadmap.tsx ---
+    const PatientRoadmap = ({ content }) => {
+      const roadmapSections = content.structuredContent || [];
+      const followUpSchedule = content.followUpSchedule || [];
+
+      return (
+        React.createElement("div", { className: "my-6" },
+          React.createElement("h3", { className: "text-2xl font-bold text-gray-800 mb-4 p-4 bg-indigo-100 border-l-4 border-indigo-500 rounded-r-md" },
+            content.title
+          ),
+          followUpSchedule.length > 0 && (
+            React.createElement("div", { className: "mb-8 p-5 bg-white rounded-lg shadow-xl border-2 border-indigo-300" },
+              React.createElement("h4", { className: "text-xl font-semibold text-indigo-700 mb-4" }, "Your Tailored Follow-up Schedule:"),
+              React.createElement("div", { className: "space-y-3" },
+                followUpSchedule.map((item, index) => (
+                  React.createElement("div", { key: index, className: "p-3 bg-indigo-50 rounded-md border border-indigo-200" },
+                    React.createElement("p", { className: "font-semibold text-indigo-600" }, item.timeframe, item.targetDate ? ` (Around: ${item.targetDate})` : ''),
+                    React.createElement("p", { className: "text-gray-700 ml-2" }, "- ", item.action),
+                    item.notes && React.createElement("p", { className: "text-xs text-gray-500 ml-2 mt-1" }, React.createElement("em", null, "Note: ", item.notes))
+                  )
+                ))
+              )
+            )
+          ),
+          React.createElement("div", { className: "space-y-6" },
+            roadmapSections.map((section, index) => (
+              React.createElement("div", { key: index, className: "p-5 bg-white rounded-lg shadow-lg border border-gray-200" },
+                React.createElement("h4", { className: "text-xl font-semibold text-indigo-700 mb-3" }, section.heading),
+                React.createElement("ul", { className: "list-disc list-inside space-y-2 text-gray-700 pl-2" },
+                  section.points.map((point, pIndex) => (
+                    React.createElement("li", { key: pIndex, className: "leading-relaxed" }, point)
+                  ))
+                )
+              )
+            ))
+          ),
+          content.source && (
+            React.createElement("p", { className: "text-xs text-gray-500 mt-4 text-right" }, "Source/Reference: ", content.source)
+          )
+        )
+      );
+    };
+
+    // --- components/ClinicalCarePathway.tsx ---
+    const ClinicalCarePathway = ({ content }) => {
+      const pathwaySections = content.structuredContent || [];
+
+      return (
+        React.createElement("div", { className: "my-6" },
+          React.createElement("h3", { className: "text-2xl font-bold text-gray-800 mb-4 p-4 bg-teal-100 border-l-4 border-teal-500 rounded-r-md" },
+            content.title
+          ),
+          React.createElement("div", { className: "space-y-5" },
+            pathwaySections.map((section, index) => (
+              React.createElement("div", { 
+                key: index, 
+                className: `p-4 rounded-md shadow-md ${
+                  section.isSubSection 
+                    ? 'ml-4 sm:ml-6 bg-gray-50 border-l-2 border-teal-300' 
+                    : 'bg-white border border-gray-200'
+                }`
+              },
+                React.createElement("h4", { 
+                  className: `font-semibold mb-2 ${
+                    section.isSubSection 
+                      ? 'text-lg text-teal-700' 
+                      : 'text-xl text-teal-800'
+                  }`
+                },
+                  section.heading
+                ),
+                section.points.length > 0 && (
+                  React.createElement("ul", { className: "list-disc list-inside space-y-1 text-gray-700 pl-2" },
+                    section.points.map((point, pIndex) => (
+                      React.createElement("li", { key: pIndex, className: "leading-relaxed" }, point)
+                    ))
+                  )
+                )
+              )
+            ))
+          ),
+          content.source && (
+            React.createElement("p", { className: "text-xs text-gray-500 mt-4 text-right" }, "Source/Reference: ", content.source)
+          )
+        )
+      );
+    };
+    
+    // --- components/GuidanceDisplay.tsx ---
+    const ACCORDION_TITLES = [
+      "General Post-Discharge AKI Care",
+      "AKI-D Care Plan Overview",
+      "Specific Considerations if you required Dialysis",
+      "Lifestyle and Self-Care",
+      "Important Disclaimer"
+    ];
+
+    const GuidanceDisplay = ({ guidance, userRole, patientData, akiStage }) => {
+      if (!guidance || guidance.length === 0) {
+        return null;
+      }
+
+      const riskSpecificGuidance = guidance.find(item => item.riskCategory === 'Low' || item.riskCategory === 'Moderate' || item.riskCategory === 'High');
+      
+      const patientRoadmapContent = userRole === 'patient' 
+        ? guidance.find(item => item.title === 'Patient Roadmap: Your Guide to Post-AKI Care') 
+        : null;
+        
+      const clinicalCarePathwayContent = userRole === 'provider' 
+        ? guidance.find(item => item.title === 'Clinical Care Pathway for Healthcare Providers') 
+        : null;
+
+      const generalGuidanceForAccordions = guidance.filter(item => 
+        item.riskCategory === 'General' && 
+        item.title !== patientRoadmapContent?.title && 
+        item.title !== clinicalCarePathwayContent?.title
+      );
+
+      return (
+        React.createElement("div", { className: "mt-8 p-0 md:p-6 bg-transparent" },
+          React.createElement("h2", { className: "text-2xl font-bold text-gray-800 mb-6 px-0 md:px-0" }, "Post-Discharge Guidance"),
+          riskSpecificGuidance && (
+            React.createElement("div", { className: `mb-6 p-4 border rounded-md shadow-sm ${
+              riskSpecificGuidance.riskCategory === 'Low' ? 'border-green-300 bg-green-50' :
+              riskSpecificGuidance.riskCategory === 'Moderate' ? 'border-yellow-300 bg-yellow-50' :
+              'border-red-300 bg-red-50'
+            }`},
+              React.createElement("h3", { className: `text-xl font-semibold mb-2 ${
+                riskSpecificGuidance.riskCategory === 'Low' ? 'text-green-700' :
+                riskSpecificGuidance.riskCategory === 'Moderate' ? 'text-yellow-700' :
+                'text-red-700'
+              }`},
+                riskSpecificGuidance.title
+              ),
+              riskSpecificGuidance.details && riskSpecificGuidance.details.length > 0 && (
+                React.createElement("ul", { className: "list-disc list-inside space-y-1 text-gray-700" },
+                  riskSpecificGuidance.details.map((point, pointIndex) => (
+                    React.createElement("li", { key: pointIndex }, point)
+                  ))
+                )
+              ),
+              riskSpecificGuidance.source && (
+                React.createElement("p", { className: "text-xs text-gray-500 mt-3" }, "Source/Reference: ", riskSpecificGuidance.source)
+              )
+            )
+          ),
+          patientRoadmapContent && React.createElement(PatientRoadmap, { content: patientRoadmapContent }),
+          clinicalCarePathwayContent && React.createElement(ClinicalCarePathway, { content: clinicalCarePathwayContent }),
+          generalGuidanceForAccordions.map((item, index) => {
+            const isAccordion = ACCORDION_TITLES.includes(item.title);
+            if (isAccordion) {
+              return (
+                React.createElement(AccordionItem, { key: index, title: item.title },
+                  item.structuredContent && item.structuredContent.length > 0 ? (
+                    item.structuredContent.map((section, sIndex) => (
+                      React.createElement("div", { key: sIndex, className: "mb-3" },
+                        React.createElement("h4", { className: "font-semibold text-gray-700" }, section.heading),
+                        React.createElement("ul", { className: "list-disc list-inside space-y-1 text-gray-600 pl-4" },
+                          section.points.map((point, pointIndex) => (
+                            React.createElement("li", { key: pointIndex }, point)
+                          ))
+                        )
+                      )
+                    ))
+                  ) : item.details && item.details.length > 0 ? (
+                    React.createElement("ul", { className: "list-disc list-inside space-y-1 text-gray-700" },
+                      item.details.map((point, pointIndex) => (
+                        React.createElement("li", { key: pointIndex }, point)
+                      ))
+                    )
+                  ) : null,
+                  item.source && (
+                    React.createElement("p", { className: "text-xs text-gray-500 mt-3" }, "Source/Reference: ", item.source)
+                  )
+                )
+              );
+            }
+            return (
+               React.createElement("div", { key: index, className: "mb-6 p-4 border border-gray-300 bg-white rounded-md shadow-sm" },
+                React.createElement("h3", { className: "text-xl font-semibold mb-2 text-gray-700" }, item.title),
+                React.createElement("ul", { className: "list-disc list-inside space-y-1 text-gray-700" },
+                  item.details?.map((point, pointIndex) => (
+                    React.createElement("li", { key: pointIndex }, point)
+                  ))
+                ),
+                item.source && (
+                  React.createElement("p", { className: "text-xs text-gray-500 mt-3" }, "Source/Reference: ", item.source)
+                )
+              )
+            );
+          })
+        )
+      );
+    };
+
+    // --- App.tsx ---
+    const App = () => {
+      const [calculatedData, setCalculatedData] = useState(null);
+      const [userRole, setUserRole] = useState(null);
+      const [currentGuidance, setCurrentGuidance] = useState([]);
+      
+      const handleRiskCalculated = useCallback((risk, totalPoints, patientData, akiStage) => {
+        setCalculatedData({ risk, totalPoints, patientData, akiStage });
+        setUserRole(null); 
+        setCurrentGuidance([]); 
+      }, []);
+
+      const handleRoleSelect = (role) => {
+        if (calculatedData) {
+          setUserRole(role);
+          const guidance = getGuidance(
+            calculatedData.risk,
+            calculatedData.totalPoints,
+            calculatedData.patientData,
+            calculatedData.akiStage,
+            role
+          );
+          setCurrentGuidance(guidance);
+        }
+      };
+
+      const handleStartNewCalculation = () => {
+        setCalculatedData(null);
+        setUserRole(null);
+        setCurrentGuidance([]);
+      };
+
+      const handleChangeRole = () => {
+        setUserRole(null); 
+        setCurrentGuidance([]);
+      };
+
+      if (!calculatedData) {
+        return (
+          React.createElement("div", { className: "min-h-screen bg-gradient-to-br from-slate-100 to-sky-100 py-8 px-4 sm:px-6 lg:px-8" },
+            React.createElement("header", { className: "text-center mb-10" },
+              React.createElement("h1", { className: "text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-sky-500 sm:text-5xl" },
+                "AKI Post-Discharge Toolkit"
+              ),
+              React.createElement("p", { className: "mt-3 max-w-2xl mx-auto text-md text-gray-600" },
+                "Assess predicted risk of advanced CKD after AKI and plan your follow-up."
+              )
+            ),
+            React.createElement("main", { className: "max-w-4xl mx-auto" },
+              React.createElement(RiskCalculatorForm, { onRiskCalculated: handleRiskCalculated })
+            ),
+            React.createElement("footer", { className: "text-center mt-12 py-6 border-t border-gray-300" },
+              React.createElement("div", { className: "mb-6 max-w-3xl mx-auto p-4 bg-red-100 border border-red-300 rounded-md text-left" },
+                React.createElement("p", { className: "text-sm text-red-700 font-semibold" }, "Important Note:"),
+                React.createElement("ul", { className: "list-disc list-inside text-xs text-red-600 mt-1 space-y-1" },
+                  React.createElement("li", null, "This tool is for informational and educational purposes and is NOT a substitute for professional medical advice."),
+                  React.createElement("li", null, "It is based on the point-score system from James MT et al., JAMA 2017;318(18):1787-1797 (Fig 3)."),
+                  React.createElement("li", null, "Always consult your healthcare provider for health concerns.")
+                )
+              ),
+              React.createElement("p", { className: "text-sm text-gray-500" }, "Guidance based on ASN Kidney Health Guidance."),
+              React.createElement("p", { className: "text-xs text-gray-400 mt-1" }, "Developed by AI for illustrative purposes.")
+            )
+          )
+        );
+      }
+
+      if (calculatedData && !userRole) {
+        return (
+          React.createElement("div", { className: "min-h-screen bg-gradient-to-br from-slate-100 to-sky-100 flex flex-col justify-center items-center py-8 px-4 sm:px-6 lg:px-8" },
+            React.createElement("div", { className: "text-center mb-10" },
+              React.createElement("h1", { className: "text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-sky-500 sm:text-5xl" },
+                "AKI Post-Discharge Toolkit"
+              ),
+              React.createElement("p", { className: "mt-3 max-w-2xl mx-auto text-md text-gray-600" },
+                "Risk calculation complete. Please select your role to view tailored guidance."
+              ),
+               React.createElement("div", { className: "mt-4 text-center" },
+                React.createElement(Button, { onClick: handleStartNewCalculation, className: "bg-slate-500 hover:bg-slate-600 text-sm py-2" },
+                  "Start New Calculation"
+                )
+              )
+            ),
+            React.createElement("div", { className: "bg-white p-8 rounded-xl shadow-2xl max-w-md w-full" },
+              React.createElement("h2", { className: "text-2xl font-semibold text-gray-800 mb-2 text-center" }, "Risk Score & Predicted CKD Risk:"),
+              React.createElement("div", { className: "text-center mb-6 p-3 bg-indigo-50 rounded-md" },
+                React.createElement("p", { className: "text-lg text-gray-800" },
+                    "Total Risk Score: ", React.createElement("span", { className: "font-semibold text-indigo-600" }, calculatedData.totalPoints, " points")
+                ),
+                React.createElement("p", { className: "text-xl font-bold text-gray-800" },
+                    "Predicted Risk of Advanced CKD: ", React.createElement("span", { className: "text-indigo-600" }, calculatedData.risk.toFixed(2), "%")
+                )
+              ),
+              React.createElement("h2", { className: "text-xl font-medium text-gray-700 mb-6 text-center" }, "Please select your role:"),
+              React.createElement("div", { className: "space-y-4" },
+                React.createElement(Button, { onClick: () => handleRoleSelect('patient'), className: "w-full text-lg py-3" },
+                  "Patient / Caregiver"
+                ),
+                React.createElement(Button, { onClick: () => handleRoleSelect('provider'), className: "w-full text-lg py-3 bg-teal-600 hover:bg-teal-700" },
+                  "Healthcare Provider"
+                )
+              )
+            ),
+            React.createElement("footer", { className: "text-center mt-12 py-6 text-xs text-gray-500" },
+              React.createElement("p", null, "This toolkit is for informational purposes only. Consult with a healthcare professional for medical advice."),
+              React.createElement("p", { className: "mt-1" }, "Inspired by ASN Kidney Health Guidance and JAMA 2017;318(18):1787-1797.")
+            )
+          )
+        );
       }
 
       return (
-        <form onSubmit={handleSubmit} autoComplete="off">
-          <div className="form-row">
-            <Input id="age" label="Age (years)" type="number" value={patientData.age ?? ''} onChange={handleInputChange} required min={0} />
-            <Select id="sex" label="Sex" value={patientData.sex} onChange={handleSelectChange} options={SEX_OPTIONS} required />
-          </div>
-          <div className="form-row">
-            <Input id="baselineScr" label="Baseline Serum Creatinine (0.28-1.82)" type="number" value={patientData.baselineScr ?? ''} onChange={handleInputChange} unit="mg/dL" required min={0.28} max={1.82} step={0.01} />
-            <Input id="peakScrInHospital" label="Peak Serum Creatinine during hospital admission" type="number" value={patientData.peakScrInHospital ?? ''} onChange={handleInputChange} unit="mg/dL" required min={0.1} step={0.01} />
-          </div>
-          <div className="form-row">
-            <Input id="dischargeScr" label="Discharge Serum Creatinine" type="number" value={patientData.dischargeScr ?? ''} onChange={handleInputChange} unit="mg/dL" required min={0.1} step={0.01} />
-            <Select id="albuminuria" label="Albuminuria" value={patientData.albuminuria} onChange={handleSelectChange} options={ALBUMINURIA_OPTIONS} required />
-          </div>
-          <div className="form-row">
-            <Input id="dischargeDate" label="Hospital Discharge Date" type="date" value={patientData.dischargeDate ?? ''} onChange={handleInputChange} required />
-            <Select id="inHospitalDialysis" label="In-hospital dialysis initiated?" value={patientData.inHospitalDialysis ? 'Yes' : 'No'} onChange={handleDialysisChange} options={IN_HOSPITAL_DIALYSIS_OPTIONS} required />
-          </div>
-          <Button type="submit">Calculate Risk & View Options</Button>
-          {calculatedRisk !== null && calculatedAkiStage !== null && totalPoints !== null && (
-            <div className="results-card">
-              <h3 className="app-title" style={{fontSize:"1.4rem",marginBottom:"1.1rem"}}>Calculation Results</h3>
-              <div className="result-label">Calculated AKI Stage:</div>
-              <span className="result-badge">{AKI_STAGE_DISPLAY[calculatedAkiStage]}</span>
-              <div style={{marginTop:"1.1rem"}} className="result-label">Total Risk Score:</div>
-              <span className="result-score">{totalPoints} points</span>
-              <div style={{marginTop:"1.1rem"}} className="result-label">Predicted Risk of Advanced CKD:</div>
-              <span className="result-badge" style={{background:"linear-gradient(90deg,#10b981,#6366f1)"}}>{calculatedRisk.toFixed(2)}%</span>
-              <div className="result-note">
-                Note: This risk is calculated based on the point-score system published in James MT et al., JAMA 2017;318(18):1787-1797, Figure 3. It is an estimate and not a guarantee of future health outcome.
-              </div>
-            </div>
-          )}
-        </form>
+        React.createElement("div", { className: "min-h-screen bg-gradient-to-br from-slate-100 to-sky-100 py-8 px-4 sm:px-6 lg:px-8" },
+          React.createElement("header", { className: "text-center mb-6" },
+            React.createElement("div", { className: "flex flex-col sm:flex-row justify-between items-center max-w-5xl mx-auto space-y-2 sm:space-y-0" },
+              React.createElement("h1", { className: "text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-sky-500 sm:text-4xl" },
+                "AKI Post-Discharge Toolkit"
+              ),
+              React.createElement("div", { className: "flex space-x-2" },
+                React.createElement(Button, { onClick: handleChangeRole, className: "text-sm bg-gray-500 hover:bg-gray-600 py-1 px-3" },
+                  "Change Role"
+                ),
+                React.createElement(Button, { onClick: handleStartNewCalculation, className: "text-sm bg-red-500 hover:bg-red-600 py-1 px-3" },
+                  "New Calculation"
+                )
+              )
+            ),
+            React.createElement("p", { className: "mt-2 max-w-2xl mx-auto text-sm text-gray-600" },
+              "Role: ", React.createElement("span", { className: "font-semibold text-indigo-700" }, userRole === 'patient' ? 'Patient / Caregiver' : 'Healthcare Provider')
+            ),
+            React.createElement("div", { className: "mt-2 p-2 bg-indigo-50 rounded-md max-w-md mx-auto" },
+                 React.createElement("p", { className: "text-sm text-gray-800" },
+                    "Total Risk Score: ", React.createElement("span", { className: "font-semibold text-indigo-600" }, calculatedData?.totalPoints, " points"), " | Predicted CKD Risk: ", React.createElement("span", { className: "font-semibold text-indigo-600" }, calculatedData?.risk.toFixed(2), "%")
+                )
+            )
+          ),
+          React.createElement("main", { className: "max-w-4xl mx-auto" },
+            currentGuidance.length > 0 && calculatedData && userRole && (
+              React.createElement(GuidanceDisplay, { 
+                guidance: currentGuidance, 
+                userRole: userRole, 
+                patientData: calculatedData.patientData, 
+                akiStage: calculatedData.akiStage
+              })
+            )
+          ),
+          React.createElement("footer", { className: "text-center mt-12 py-6 border-t border-gray-300" },
+            React.createElement("div", { className: "mb-6 max-w-3xl mx-auto p-4 bg-red-100 border border-red-300 rounded-md text-left" },
+              React.createElement("p", { className: "text-sm text-red-700 font-semibold" },
+                "Important Disclaimer:"
+              ),
+              React.createElement("ul", { className: "list-disc list-inside text-xs text-red-600 mt-1 space-y-1" },
+                React.createElement("li", null, "This tool is for informational and educational purposes only and is NOT a substitute for professional medical advice, diagnosis, or treatment."),
+                React.createElement("li", null, "This calculator is specifically intended for patients who were hospitalized with AKI and had a baseline eGFR > 45 mL/min/1.73 m². Baseline SCr input is restricted to 0.28-1.82 mg/dL."),
+                React.createElement("li", null, "The risk calculation implemented in this tool is based on the point-score system for predicting advanced CKD post-AKI published in:",
+                  React.createElement("br", null), React.createElement("em", null, "James MT, Pannu N, Hemmelgarn BR, et al. Derivation and External Validation of Prediction Models for Advanced Chronic Kidney Disease following Acute Kidney Injury. JAMA. 2017;318(18):1787-1797 (referencing Figure 3).")
+                ),
+                React.createElement("li", null, "The follow-up guidance stratification is informed by findings on risk thresholds presented in the same publication (e.g., supplementary eTable 7)."),
+                React.createElement("li", null, "The aforementioned publication also discusses other predictive models and their performance, including models for different patient cohorts or data availability scenarios (e.g., as detailed in its supplementary materials like eTable 6)."),
+                React.createElement("li", null, "The calculation is an estimate and not a guarantee of future health outcomes. It is NOT a clinically validated diagnostic tool in this software form."),
+                React.createElement("li", null, "Always consult your healthcare provider for any health concerns or before making any decisions related to your health or treatment.")
+              )
+            ),
+            React.createElement("p", { className: "text-sm text-gray-500" },
+              "Guidance based on ASN Kidney Health Guidance. This is an educational tool."
+            ),
+             React.createElement("p", { className: "text-xs text-gray-400 mt-1" },
+              "Developed by AI for illustrative purposes."
+            )
+          )
+        )
       );
+    };
+
+    // --- index.tsx (React rendering logic) ---
+    const rootElement = document.getElementById('root');
+    if (!rootElement) {
+      throw new Error("Could not find root element to mount to");
     }
 
-    // --- Main App Component ---
-    function App() {
-      const [calculated, setCalculated] = useState(null);
-      const [userRole, setUserRole] = useState(null);
-      const [guidance, setGuidance] = useState([]);
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(
+      React.createElement(React.StrictMode, null,
+        React.createElement(App, null)
+      )
+    );
 
-      // On submit, reset role and guidance
-      const handleCalculated = (risk, totalPoints, patientData, akiStage) => {
-        setCalculated({ risk, totalPoints, patientData, akiStage });
-        setUserRole(null);
-        setGuidance([]);
-      };
-
-      // Role selection triggers guidance generation
-      const handleRoleSelect = (role) => {
-        setUserRole(role);
-        if (calculated) {
-          setGuidance(getGuidance(
-            calculated.risk,
-            calculated.totalPoints,
-            calculated.patientData,
-            calculated.akiStage,
-            role
-          ));
-        }
-      };
-
-      return (
-        <div className="main-card">
-          <div className="app-title">AKI Post-Discharge Toolkit</div>
-          <div className="app-subtitle">AKI Risk Index Calculator</div>
-          <RiskCalculatorForm onCalculated={handleCalculated} />
-          {calculated && (
-            <div>
-              <div className="section-title" style={{textAlign:'center',marginTop:"2.3rem",marginBottom:'0.5rem'}}>
-                Who are you viewing guidance for?
-              </div>
-              <div className="role-chooser">
-                <button className={"role-btn"+(userRole==='patient'?' active':'')} onClick={()=>handleRoleSelect('patient')}>Patient / Family</button>
-                <button className={"role-btn"+(userRole==='provider'?' active':'')} onClick={()=>handleRoleSelect('provider')}>Healthcare Provider</button>
-              </div>
-              {userRole && <GuidanceDisplay guidance={guidance} userRole={userRole} />}
-            </div>
-          )}
-          <div className="footer">
-            © {new Date().getFullYear()} AKI Risk Index | For educational use only.
-          </div>
-        </div>
-      );
-    }
-
-    const container = document.getElementById('root');
-    const root = ReactDOM.createRoot(container);
-    root.render(<App />);
+    // --- END OF INLINED SCRIPT CONTENT ---
   </script>
 </body>
 </html>
