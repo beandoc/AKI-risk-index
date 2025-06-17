@@ -798,12 +798,12 @@
           followUpSchedule.length > 0 && (
             React.createElement("div", { className: "mb-8 p-5 bg-white rounded-lg shadow-xl border-2 border-indigo-300" },
               React.createElement("h4", { className: "text-xl font-semibold text-indigo-700 mb-4" }, "Your Tailored Follow-up Schedule:"),
-              React.createElement("div", { className: "space-y-3" },
+              React.createElement("div", { className: "space-y-3" }, // Corrected className here
                 followUpSchedule.map((item, index) => (
                   React.createElement("div", { key: index, className: "p-3 bg-indigo-50 rounded-md border border-indigo-200" },
                     React.createElement("p", { className: "font-semibold text-indigo-600" }, item.timeframe, item.targetDate ? ` (Around: ${item.targetDate})` : ''),
                     React.createElement("p", { className: "text-gray-700 ml-2" }, "- ", item.action),
-                    item.notes && React.createElement("p", { className: "text-xs text-gray-500 ml-2 mt-1" }, React.createElement("em", null, "Note: ", item.notes))
+                    item.notes && React.createElement("p", { className: "text-xs text-gray-500 ml-2 mt-1" }, React.createElement("em", null, "Note: "), item.notes)
                   )
                 ))
               )
@@ -839,18 +839,18 @@
           ),
           React.createElement("div", { className: "space-y-5" },
             pathwaySections.map((section, index) => (
-              React.createElement("div", { 
-                key: index, 
+              React.createElement("div", {
+                key: index,
                 className: `p-4 rounded-md shadow-md ${
-                  section.isSubSection 
-                    ? 'ml-4 sm:ml-6 bg-gray-50 border-l-2 border-teal-300' 
+                  section.isSubSection
+                    ? 'ml-4 sm:ml-6 bg-gray-50 border-l-2 border-teal-300'
                     : 'bg-white border border-gray-200'
                 }`
               },
-                React.createElement("h4", { 
+                React.createElement("h4", {
                   className: `font-semibold mb-2 ${
-                    section.isSubSection 
-                      ? 'text-lg text-teal-700' 
+                    section.isSubSection
+                      ? 'text-lg text-teal-700'
                       : 'text-xl text-teal-800'
                   }`
                 },
@@ -872,7 +872,7 @@
         )
       );
     };
-    
+
     // --- components/GuidanceDisplay.tsx ---
     const ACCORDION_TITLES = [
       "General Post-Discharge AKI Care",
@@ -888,35 +888,40 @@
       }
 
       const riskSpecificGuidance = guidance.find(item => item.riskCategory === 'Low' || item.riskCategory === 'Moderate' || item.riskCategory === 'High');
-      
-      const patientRoadmapContent = userRole === 'patient' 
-        ? guidance.find(item => item.title === 'Patient Roadmap: Your Guide to Post-AKI Care') 
-        : null;
-        
-      const clinicalCarePathwayContent = userRole === 'provider' 
-        ? guidance.find(item => item.title === 'Clinical Care Pathway for Healthcare Providers') 
+
+      const patientRoadmapContent = userRole === 'patient'
+        ? guidance.find(item => item.title === 'Patient Roadmap: Your Guide to Post-AKI Care')
         : null;
 
-      const generalGuidanceForAccordions = guidance.filter(item => 
-        item.riskCategory === 'General' && 
-        item.title !== patientRoadmapContent?.title && 
+      const clinicalCarePathwayContent = userRole === 'provider'
+        ? guidance.find(item => item.title === 'Clinical Care Pathway for Healthcare Providers')
+        : null;
+
+      const generalGuidanceForAccordions = guidance.filter(item =>
+        item.riskCategory === 'General' &&
+        item.title !== patientRoadmapContent?.title &&
         item.title !== clinicalCarePathwayContent?.title
       );
 
       return (
         React.createElement("div", { className: "mt-8 p-0 md:p-6 bg-transparent" },
           React.createElement("h2", { className: "text-2xl font-bold text-gray-800 mb-6 px-0 md:px-0" }, "Post-Discharge Guidance"),
+
           riskSpecificGuidance && (
-            React.createElement("div", { className: `mb-6 p-4 border rounded-md shadow-sm ${
-              riskSpecificGuidance.riskCategory === 'Low' ? 'border-green-300 bg-green-50' :
-              riskSpecificGuidance.riskCategory === 'Moderate' ? 'border-yellow-300 bg-yellow-50' :
-              'border-red-300 bg-red-50'
-            }`},
-              React.createElement("h3", { className: `text-xl font-semibold mb-2 ${
-                riskSpecificGuidance.riskCategory === 'Low' ? 'text-green-700' :
-                riskSpecificGuidance.riskCategory === 'Moderate' ? 'text-yellow-700' :
-                'text-red-700'
-              }`},
+            React.createElement("div", {
+              className: `mb-6 p-4 border rounded-md shadow-sm ${
+                riskSpecificGuidance.riskCategory === 'Low' ? 'border-green-300 bg-green-50' :
+                riskSpecificGuidance.riskCategory === 'Moderate' ? 'border-yellow-300 bg-yellow-50' :
+                'border-red-300 bg-red-50'
+              }`
+            },
+              React.createElement("h3", {
+                className: `text-xl font-semibold mb-2 ${
+                  riskSpecificGuidance.riskCategory === 'Low' ? 'text-green-700' :
+                  riskSpecificGuidance.riskCategory === 'Moderate' ? 'text-yellow-700' :
+                  'text-red-700'
+                }`
+              },
                 riskSpecificGuidance.title
               ),
               riskSpecificGuidance.details && riskSpecificGuidance.details.length > 0 && (
@@ -931,13 +936,19 @@
               )
             )
           ),
-          patientRoadmapContent && React.createElement(PatientRoadmap, { content: patientRoadmapContent }),
-          clinicalCarePathwayContent && React.createElement(ClinicalCarePathway, { content: clinicalCarePathwayContent }),
+
+          patientRoadmapContent && (
+            React.createElement(PatientRoadmap, { content: patientRoadmapContent })
+          ),
+          clinicalCarePathwayContent && (
+            React.createElement(ClinicalCarePathway, { content: clinicalCarePathwayContent })
+          ),
+
           generalGuidanceForAccordions.map((item, index) => {
             const isAccordion = ACCORDION_TITLES.includes(item.title);
             if (isAccordion) {
               return (
-                React.createElement(AccordionItem, { key: index, title: item.title },
+                React.createElement(AccordionItem, { key: index, title: item.title, initiallyOpen: item.title === 'Important Disclaimer' },
                   item.structuredContent && item.structuredContent.length > 0 ? (
                     item.structuredContent.map((section, sIndex) => (
                       React.createElement("div", { key: sIndex, className: "mb-3" },
@@ -962,6 +973,7 @@
                 )
               );
             }
+            // Fallback for general items not fitting accordion titles (should be minimal)
             return (
                React.createElement("div", { key: index, className: "mb-6 p-4 border border-gray-300 bg-white rounded-md shadow-sm" },
                 React.createElement("h3", { className: "text-xl font-semibold mb-2 text-gray-700" }, item.title),
@@ -980,16 +992,17 @@
       );
     };
 
+
     // --- App.tsx ---
     const App = () => {
       const [calculatedData, setCalculatedData] = useState(null);
       const [userRole, setUserRole] = useState(null);
       const [currentGuidance, setCurrentGuidance] = useState([]);
-      
+
       const handleRiskCalculated = useCallback((risk, totalPoints, patientData, akiStage) => {
         setCalculatedData({ risk, totalPoints, patientData, akiStage });
-        setUserRole(null); 
-        setCurrentGuidance([]); 
+        setUserRole(null);
+        setCurrentGuidance([]);
       }, []);
 
       const handleRoleSelect = (role) => {
@@ -1013,7 +1026,7 @@
       };
 
       const handleChangeRole = () => {
-        setUserRole(null); 
+        setUserRole(null);
         setCurrentGuidance([]);
       };
 
@@ -1039,9 +1052,7 @@
                   React.createElement("li", null, "It is based on the point-score system from James MT et al., JAMA 2017;318(18):1787-1797 (Fig 3)."),
                   React.createElement("li", null, "Always consult your healthcare provider for health concerns.")
                 )
-              ),
-              React.createElement("p", { className: "text-sm text-gray-500" }, "Guidance based on ASN Kidney Health Guidance."),
-              React.createElement("p", { className: "text-xs text-gray-400 mt-1" }, "Developed by AI for illustrative purposes.")
+              )
             )
           )
         );
@@ -1057,7 +1068,7 @@
               React.createElement("p", { className: "mt-3 max-w-2xl mx-auto text-md text-gray-600" },
                 "Risk calculation complete. Please select your role to view tailored guidance."
               ),
-               React.createElement("div", { className: "mt-4 text-center" },
+              React.createElement("div", { className: "mt-4 text-center" },
                 React.createElement(Button, { onClick: handleStartNewCalculation, className: "bg-slate-500 hover:bg-slate-600 text-sm py-2" },
                   "Start New Calculation"
                 )
@@ -1067,10 +1078,10 @@
               React.createElement("h2", { className: "text-2xl font-semibold text-gray-800 mb-2 text-center" }, "Risk Score & Predicted CKD Risk:"),
               React.createElement("div", { className: "text-center mb-6 p-3 bg-indigo-50 rounded-md" },
                 React.createElement("p", { className: "text-lg text-gray-800" },
-                    "Total Risk Score: ", React.createElement("span", { className: "font-semibold text-indigo-600" }, calculatedData.totalPoints, " points")
+                  "Total Risk Score: ", React.createElement("span", { className: "font-semibold text-indigo-600" }, calculatedData.totalPoints, " points")
                 ),
                 React.createElement("p", { className: "text-xl font-bold text-gray-800" },
-                    "Predicted Risk of Advanced CKD: ", React.createElement("span", { className: "text-indigo-600" }, calculatedData.risk.toFixed(2), "%")
+                  "Predicted Risk of Advanced CKD: ", React.createElement("span", { className: "text-indigo-600" }, calculatedData.risk.toFixed(2), "%")
                 )
               ),
               React.createElement("h2", { className: "text-xl font-medium text-gray-700 mb-6 text-center" }, "Please select your role:"),
@@ -1111,17 +1122,17 @@
               "Role: ", React.createElement("span", { className: "font-semibold text-indigo-700" }, userRole === 'patient' ? 'Patient / Caregiver' : 'Healthcare Provider')
             ),
             React.createElement("div", { className: "mt-2 p-2 bg-indigo-50 rounded-md max-w-md mx-auto" },
-                 React.createElement("p", { className: "text-sm text-gray-800" },
-                    "Total Risk Score: ", React.createElement("span", { className: "font-semibold text-indigo-600" }, calculatedData?.totalPoints, " points"), " | Predicted CKD Risk: ", React.createElement("span", { className: "font-semibold text-indigo-600" }, calculatedData?.risk.toFixed(2), "%")
-                )
+              React.createElement("p", { className: "text-sm text-gray-800" },
+                "Total Risk Score: ", React.createElement("span", { className: "font-semibold text-indigo-600" }, calculatedData?.totalPoints, " points"), " | Predicted CKD Risk: ", React.createElement("span", { className: "font-semibold text-indigo-600" }, calculatedData?.risk.toFixed(2), "%")
+              )
             )
           ),
           React.createElement("main", { className: "max-w-4xl mx-auto" },
             currentGuidance.length > 0 && calculatedData && userRole && (
-              React.createElement(GuidanceDisplay, { 
-                guidance: currentGuidance, 
-                userRole: userRole, 
-                patientData: calculatedData.patientData, 
+              React.createElement(GuidanceDisplay, {
+                guidance: currentGuidance,
+                userRole: userRole,
+                patientData: calculatedData.patientData,
                 akiStage: calculatedData.akiStage
               })
             )
@@ -1142,32 +1153,19 @@
                 React.createElement("li", null, "The calculation is an estimate and not a guarantee of future health outcomes. It is NOT a clinically validated diagnostic tool in this software form."),
                 React.createElement("li", null, "Always consult your healthcare provider for any health concerns or before making any decisions related to your health or treatment.")
               )
-            ),
-            React.createElement("p", { className: "text-sm text-gray-500" },
-              "Guidance based on ASN Kidney Health Guidance. This is an educational tool."
-            ),
-             React.createElement("p", { className: "text-xs text-gray-400 mt-1" },
-              "Developed by AI for illustrative purposes."
             )
           )
         )
       );
     };
 
-    // --- index.tsx (React rendering logic) ---
+    // --- END OF INLINED SCRIPT CONTENT ---
     const rootElement = document.getElementById('root');
     if (!rootElement) {
       throw new Error("Could not find root element to mount to");
     }
-
     const root = ReactDOM.createRoot(rootElement);
-    root.render(
-      React.createElement(React.StrictMode, null,
-        React.createElement(App, null)
-      )
-    );
-
-    // --- END OF INLINED SCRIPT CONTENT ---
+    root.render(React.createElement(App));
   </script>
 </body>
 </html>
